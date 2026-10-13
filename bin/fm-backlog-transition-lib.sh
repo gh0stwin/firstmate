@@ -587,7 +587,7 @@ fm_backlog_retain() {  # <data-dir> <id> [flag...]
           deliverable="${deliverable:+$deliverable; }PR $arg"
           row_args=(--pr "$arg")
         else
-          retain_label=$(fm_backlog_pr_note_label "$arg") || retain_label='Forge link'
+          retain_label=$(fm_backlog_pr_note_label "$arg")
           deliverable="${deliverable:+$deliverable; }$retain_label $arg"
         fi
         ;;
