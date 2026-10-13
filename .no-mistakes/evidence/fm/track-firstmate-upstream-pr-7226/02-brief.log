@@ -1,0 +1,73 @@
+# === intake: firstmate passes the registered binding to fm-brief.sh --forge ===
+# direct-PR on forge=gitlab: the worker is told to open the merge request itself with glab-axi
+$ fm-brief.sh gl-arm firstmate-gitlab-port-fixture --mode direct-PR --forge gitlab
+scaffolded: /tmp/fm-lab.zaEFbL/data/gl-arm/brief.md (ship, mode=direct-PR forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+[exit 0]
+
+$ grep -n -E 'Delivery contract|Ship branch|glab-axi|gh-axi|merge request' data/gl-arm/brief.md | cut -c1-420
+29:3. Use glab-axi for GitLab operations, gh-axi for GitHub operations, and chrome-devtools-axi for browser operations.
+91:Delivery contract: mode=direct-PR forge=gitlab
+92:Ship branch: fm/gl-arm
+95:When it is implemented and committed, push your branch and open a merge request with `glab-axi` that is ready for review, not a draft.
+96:Before you report done, read the merge request back from the forge and confirm it is not a draft (`glab-axi mr view <iid> --full` must print `draft: no`, where <iid> is the merge request number from your MR URL); if it is a draft, mark it ready with `glab-axi mr update <iid> --ready`.
+[exit 0]
+
+# direct-PR with a per-task base branch: accepted on gitlab and rendered as glab-axi's --target-branch
+$ fm-brief.sh gl-base firstmate-gitlab-port-fixture --mode direct-PR --forge gitlab --base-branch release/1.x
+scaffolded: /tmp/fm-lab.zaEFbL/data/gl-base/brief.md (ship, mode=direct-PR forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+[exit 0]
+
+$ grep -n -E 'Delivery contract|target-branch|Base branch' data/gl-base/brief.md | cut -c1-420
+17:Base branch: release/1.x
+92:Delivery contract: mode=direct-PR forge=gitlab
+96:When it is implemented and committed, push your branch and open a merge request with `glab-axi` that is ready for review, not a draft, against the base branch `release/1.x` (`--target-branch release/1.x`), not the repository default.
+[exit 0]
+
+# no-mistakes on forge=gitlab: the pipeline publishes; the worker reads the merge request back with glab-axi
+$ fm-brief.sh gl-nm firstmate-gitlab-port-fixture --mode no-mistakes --forge gitlab
+scaffolded: /tmp/fm-lab.zaEFbL/data/gl-nm/brief.md (ship, mode=no-mistakes forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+[exit 0]
+
+$ grep -n -E 'Delivery contract|glab-axi|gh-axi' data/gl-nm/brief.md | cut -c1-420
+30:3. Use glab-axi for GitLab operations, gh-axi for GitHub operations, and chrome-devtools-axi for browser operations.
+94:Delivery contract: mode=no-mistakes forge=gitlab
+129:After /no-mistakes reports CI green (the CI-ready return point - do not wait for it to keep monitoring in the background until merge), read the PR back from the forge and confirm it is not a draft (`glab-axi mr view <iid> --full` must print `draft: no`, where <iid> is the merge request number from your MR URL); if it is a draft, mark it ready with `glab-axi mr update <iid> --ready`.
+[exit 0]
+
+# ADVERSARIAL: forgejo and gerrit keep refusing --base-branch (only gitlab was opened up)
+$ fm-brief.sh fj-base firstmate-gitlab-port-fixture --mode direct-PR --forge forgejo --base-branch release/1.x
+error: fm-brief.sh --base-branch: a base branch is not supported on forge=forgejo
+[exit 1]
+
+$ fm-brief.sh ge-base firstmate-gitlab-port-fixture --mode direct-PR --forge gerrit --base-branch release/1.x
+error: fm-brief.sh --base-branch: a base branch is not supported on forge=gerrit
+[exit 1]
+
+# ADVERSARIAL: local-only publishes nothing, so a gitlab forge is refused; an unknown forge is refused
+$ fm-brief.sh gl-local firstmate-gitlab-port-fixture --mode local-only --forge gitlab
+error: fm-brief.sh --forge: forge=gitlab cannot ship mode=local-only - that mode publishes nothing, so a forge has no meaning there, and its landing would fast-forward local main with content the review server has never seen; ship no-mistakes or direct-PR, which publish through the forge
+[exit 1]
+
+$ fm-brief.sh gl-bogus firstmate-gitlab-port-fixture --mode direct-PR --forge gitlabb
+error: fm-brief.sh --forge: unknown forge 'gitlabb' (expected none, gerrit, gitlab, or forgejo)
+[exit 1]
+
+$ ls data | sort
+gl-arm
+gl-base
+gl-nm
+projects.md
+[exit 0]
+
+# REGRESSION: an unbound (GitHub) project's brief is unchanged - gh-axi only, no forge token
+$ fm-brief.sh gh-plain firstmate-gitlab-port-fixture --mode direct-PR
+scaffolded: /tmp/fm-lab.zaEFbL/data/gh-plain/brief.md (ship, mode=direct-PR; replace {TASK} and {FIRSTMATE_SPEC})
+[exit 0]
+
+$ grep -n -E 'Delivery contract|glab-axi|gh-axi' data/gh-plain/brief.md | cut -c1-300
+29:3. Use gh-axi for GitHub operations and chrome-devtools-axi for browser operations.
+91:Delivery contract: mode=direct-PR
+95:When it is implemented and committed, push your branch and open a PR with `gh-axi` that is ready for review, not a draft.
+96:Before you report done, read the PR back from the forge and confirm it is not a draft (`gh-axi pr view <number>` must print `draft: no`, where <number> is the PR number from your PR URL); if it is a draft, mark it ready with `gh-axi pr ready <number>`.
+[exit 0]
+

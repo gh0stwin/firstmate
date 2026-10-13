@@ -1,0 +1,31 @@
+# === REGRESSION: the GitHub arm shares the draft reader this change generalised ===
+# read-only against public GitHub pull requests; the watch is armed only inside this lab home
+$ gh pr view https://github.com/kunchenguid/firstmate/pull/6996 --json number,isDraft,state
+{"isDraft":true,"number":6996,"state":"OPEN"}
+[exit 0]
+
+# a real GitHub draft still refuses, with the pull-request wording
+$ fm-pr-check.sh gh-reg https://github.com/kunchenguid/firstmate/pull/6996
+error: https://github.com/kunchenguid/firstmate/pull/6996 is a draft pull request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+[exit 1]
+
+$ grep -c -E '^(pr|pr_head)=' state/gh-reg.meta; ls state | grep -c '^gh-reg.check.sh' 
+0
+0
+[exit 1]
+
+$ gh pr view https://github.com/kunchenguid/firstmate/pull/7226 --json number,isDraft,state,headRefOid
+{"headRefOid":"ae3e58e80b7656492538407179580aa8298c932f","isDraft":false,"number":7226,"state":"OPEN"}
+[exit 0]
+
+# a ready GitHub pull request still arms and records gh's head
+$ fm-pr-check.sh gh-reg https://github.com/kunchenguid/firstmate/pull/7226
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+armed: state/gh-reg.check.sh
+[exit 0]
+
+$ grep -E '^(pr|pr_head)=' state/gh-reg.meta
+pr=https://github.com/kunchenguid/firstmate/pull/7226
+pr_head=ae3e58e80b7656492538407179580aa8298c932f
+[exit 0]
+

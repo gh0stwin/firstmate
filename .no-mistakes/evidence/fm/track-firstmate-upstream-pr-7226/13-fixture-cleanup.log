@@ -1,0 +1,31 @@
+# === fixture cleanup: the throwaway merge request is closed (never merged) and its branch deleted ===
+$ glab-axi mr update 2 --close
+updated:
+  iid: 2
+  title: "fixture: gate live validation (throwaway)"
+  state: closed
+  draft: no
+help[1]:
+  Run `glab-axi mr view 2 --full` to see updated state
+[exit 0]
+
+$ git push origin --delete fm/gl-arm
+To https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+ - [deleted]         fm/gl-arm
+[exit 0]
+
+$ glab mr list -R gh0stwin/firstmate-gitlab-port-fixture --all
+Showing 2 merge requests on gh0stwin/firstmate-gitlab-port-fixture. (Page 1)
+
+!2	gh0stwin/firstmate-gitlab-port-fixture!2	fixture: gate live validation (throwaway)	(main) ← (fm/gl-arm)
+!1	gh0stwin/firstmate-gitlab-port-fixture!1	fixture: live evidence change	(main) ← (fm/live-evidence)
+
+
+$ glab mr view 2 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json | jq -c '{iid,state,merged_at,sha}'
+{"iid":2,"state":"closed","merged_at":null,"sha":"ecb019bc033889f2b00105b2a3e9e4fd49dd4827"}
+
+$ git ls-remote --heads https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+dccd89dcdf5277ef3f32be37afee4ba3daf4204b	refs/heads/main
+
+$ glab api projects/gh0stwin%2Ffirstmate-gitlab-port-fixture/pipelines | jq -c '[.[] | {id,ref,status,sha: .sha[0:8]}]'
+[{"id":2944533116,"ref":"refs/merge-requests/2/head","status":"skipped","sha":"ecb019bc"},{"id":2944533082,"ref":"fm/gl-arm","status":"skipped","sha":"ecb019bc"},{"id":2944531081,"ref":"fm/gl-arm","status":"skipped","sha":"d0ed8ef3"},{"id":2943414828,"ref":"main","status":"success","sha":"dccd89dc"},{"id":2943370279,"ref":"fm/live-evidence","status":"success","sha":"852919f4"},{"id":2943361689,"ref":"fm/live-evidence","status":"canceled","sha":"d93a01ff"}]

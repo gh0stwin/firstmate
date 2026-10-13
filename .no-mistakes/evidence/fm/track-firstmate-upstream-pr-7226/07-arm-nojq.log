@@ -1,0 +1,44 @@
+# === BOUNDARY: a host with no jq (recorded ruling: arming must not hard-require it) ===
+# a second task record on the same worker copy, so gl-arm's record stays as armed above
+# put the merge request back in draft, so a skipped draft read is observable
+$ cd /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture && glab-axi mr update 2 --draft | grep -E 'draft:'
+  draft: yes
+[exit 0]
+
+$ PATH='/tmp/fm-lab.zaEFbL/stubbin:/home/node/.no-mistakes/worktrees/ef201284bc89/01M4VNND521J15NXACKYQ4ZHS6/bin:/home/node/.npm-global/bin:/home/node/.cargo/bin:/opt/bin:/home/node/.local/bin:/home/node/.pi/agent/bin:/home/node/.npm-global/bin:/home/node/.cargo/bin:/opt/bin:/opt/miniconda3/bin:/opt/miniconda3/condabin:/home/node/.local/bin:/usr/local/bin:/usr/games:/home/node/go/bin:/home/node/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/sbin:/usr/sbin:/sbin:/tmp/fm-lab.zaEFbL/nojq/usrbin' bash -c 'command -v jq || echo "jq: not on PATH"; command -v glab git'
+jq: not on PATH
+/tmp/fm-lab.zaEFbL/nojq/usrbin/glab
+/tmp/fm-lab.zaEFbL/nojq/usrbin/git
+[exit 0]
+
+# without jq: no draft check, no pr_head - the watch arms exactly as it did before this change
+$ PATH='/tmp/fm-lab.zaEFbL/stubbin:/home/node/.no-mistakes/worktrees/ef201284bc89/01M4VNND521J15NXACKYQ4ZHS6/bin:/home/node/.npm-global/bin:/home/node/.cargo/bin:/opt/bin:/home/node/.local/bin:/home/node/.pi/agent/bin:/home/node/.npm-global/bin:/home/node/.cargo/bin:/opt/bin:/opt/miniconda3/bin:/opt/miniconda3/condabin:/home/node/.local/bin:/usr/local/bin:/usr/games:/home/node/go/bin:/home/node/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/sbin:/usr/sbin:/sbin:/tmp/fm-lab.zaEFbL/nojq/usrbin' fm-pr-check.sh gl-nojq https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+contributions: jq unavailable; coverage is unconfirmed
+armed: state/gl-nojq.check.sh
+[exit 0]
+
+$ grep -E '^(pr|pr_head)=' state/gl-nojq.meta; ls state | grep gl-nojq
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+gl-nojq.check.sh
+gl-nojq.meta
+gl-nojq.pr-poll
+gl-nojq.pr-poll-registration
+[exit 0]
+
+# CONTROL: same draft, jq back on PATH - the refusal returns, so it was the missing jq that skipped it
+$ fm-pr-check.sh gl-arm https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+error: https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+[exit 1]
+
+# the earlier arm of gl-arm is untouched by that refusal
+$ grep -E '^(pr|pr_head)=' state/gl-arm.meta
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+pr_head=d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+[exit 0]
+
+# restore the merge request to ready
+$ cd /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture && glab-axi mr update 2 --ready | grep -E 'draft:'
+  draft: no
+[exit 0]
+

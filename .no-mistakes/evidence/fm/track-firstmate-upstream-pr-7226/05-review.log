@@ -1,0 +1,70 @@
+# === a fix round lands on the merge request from elsewhere (as a pipeline's pushes do) ===
+# the worker's copy and the pr_head= recorded at arm time both go stale
+$ git clone -q --branch fm/gl-arm --single-branch https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git scratch/fixround
+[exit 0]
+
+$ git -C scratch/fixround commit -q -am fixture: fix round advances the merge request head
+[exit 0]
+
+$ git -C scratch/fixround push -q -o ci.skip origin fm/gl-arm
+remote: 
+remote: View merge request for fm/gl-arm:        
+remote:   https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2        
+remote: 
+[exit 0]
+
+$ git ls-remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git refs/merge-requests/2/head refs/heads/fm/gl-arm
+ecb019bc033889f2b00105b2a3e9e4fd49dd4827	refs/heads/fm/gl-arm
+ecb019bc033889f2b00105b2a3e9e4fd49dd4827	refs/merge-requests/2/head
+[exit 0]
+
+$ grep -E '^(pr|pr_head)=' state/gl-arm.meta; echo "worker copy HEAD: $(git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture rev-parse HEAD)"
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+pr_head=d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+worker copy HEAD: d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+[exit 0]
+
+# the new head is not even an object in the worker's repository yet
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture cat-file -e ecb019bc033889f2b00105b2a3e9e4fd49dd4827^{commit} && echo present || echo 'absent locally'
+fatal: Not a valid object name ecb019bc033889f2b00105b2a3e9e4fd49dd4827^{commit}
+absent locally
+[exit 0]
+
+# === firstmate reviews: the compare side must be the freshly fetched refs/merge-requests/2/head ===
+$ fm-review-diff.sh gl-arm --stat
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ NOTES.md | 2 ++
+ 1 file changed, 2 insertions(+)
+[exit 0]
+
+# the private review ref now holds the forge's current head, not the recorded one
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture rev-parse refs/fm-review/mr/2/head
+ecb019bc033889f2b00105b2a3e9e4fd49dd4827
+[exit 0]
+
+# CONTRAST: what the stale recorded pr_head (or the worker's local branch) would have shown - one insertion, not two
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture diff --stat origin/main...d0ed8ef3e52a3d45da513a614da0ce3e91356b01 --
+ NOTES.md | 1 +
+ 1 file changed, 1 insertion(+)
+[exit 0]
+
+# full review output (stat plus diff)
+$ fm-review-diff.sh gl-arm
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ NOTES.md | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/NOTES.md b/NOTES.md
+index 0f3a6d8..2aac585 100644
+--- a/NOTES.md
++++ b/NOTES.md
+@@ -1,3 +1,5 @@
+ fixture notes baseline
+ live-evidence change
+ second commit advancing the MR head for the fresh-fetch proof
++gate live validation 2026-10-13T22:43:17Z: first change
++gate live validation: second change (fix round)
+[exit 0]
+

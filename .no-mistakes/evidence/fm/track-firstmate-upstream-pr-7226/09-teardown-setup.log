@@ -1,0 +1,90 @@
+# === three ship tasks whose commits sit on NO remote-tracking ref, so teardown must ask the forge ===
+# the project clone tracks only main - as a no-mistakes worker's clone does, where the pipeline (not the
+# worker) pushes the branch - so the only thing that can prove the work landed is the merge request itself
+$ git clone -q --single-branch --branch main https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git /tmp/fm-lab.zaEFbL/projects/fixture-td
+[exit 0]
+
+$ glab mr view 1 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json | jq -c '{iid,state,sha,source_branch,merge_commit_sha,squash_commit_sha}'
+{"iid":1,"state":"merged","sha":"852919f4e3dd57a222f6ab3b4e825138eed149ed","source_branch":"fm/live-evidence","merge_commit_sha":"dccd89dcdf5277ef3f32be37afee4ba3daf4204b","squash_commit_sha":"036bff82b770ff80df1dbcd4d1542ef33e2ad0cc"}
+[exit 0]
+
+$ glab mr view 2 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json | jq -c '{iid,state,draft,sha,source_branch}'
+{"iid":2,"state":"opened","draft":false,"sha":"ecb019bc033889f2b00105b2a3e9e4fd49dd4827","source_branch":"fm/gl-arm"}
+[exit 0]
+
+$ git ls-remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+dccd89dcdf5277ef3f32be37afee4ba3daf4204b	HEAD
+ecb019bc033889f2b00105b2a3e9e4fd49dd4827	refs/heads/fm/gl-arm
+dccd89dcdf5277ef3f32be37afee4ba3daf4204b	refs/heads/main
+852919f4e3dd57a222f6ab3b4e825138eed149ed	refs/merge-requests/1/head
+a266b5d38e0fea44aab3f812759cf56919d9a191	refs/merge-requests/1/merge
+ecb019bc033889f2b00105b2a3e9e4fd49dd4827	refs/merge-requests/2/head
+d2774c3679eeca69736986b98909ba1aa0046365	refs/merge-requests/2/merge
+[exit 0]
+
+# gl-stale: the worker committed again AFTER its merge request merged - work that exists nowhere else
+# each watch is armed through the real fm-pr-check.sh (no-mistakes mode: the forge-reported head is the named head)
+$ fm-pr-check.sh gl-landed https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/1
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+armed: state/gl-landed.check.sh
+[exit 0]
+
+$ fm-pr-check.sh gl-stale https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/1
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+armed: state/gl-stale.check.sh
+[exit 0]
+
+$ fm-pr-check.sh gl-open https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+armed: state/gl-open.check.sh
+[exit 0]
+
+gl-landed  branch=fm/gl-landed HEAD=852919f4e3dd57a222f6ab3b4e825138eed149ed
+           pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/1
+           pr_head=852919f4e3dd57a222f6ab3b4e825138eed149ed
+           commits on no remote-tracking ref: 2
+gl-stale   branch=fm/gl-stale HEAD=1faaadd91c3defda99b5c48b0c6de07119604a6c
+           pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/1
+           pr_head=852919f4e3dd57a222f6ab3b4e825138eed149ed
+           commits on no remote-tracking ref: 3
+gl-open    branch=fm/gl-open HEAD=ecb019bc033889f2b00105b2a3e9e4fd49dd4827
+           pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+           pr_head=ecb019bc033889f2b00105b2a3e9e4fd49dd4827
+           commits on no remote-tracking ref: 2
+
+$ git -C /tmp/fm-lab.zaEFbL/projects/fixture-td for-each-ref --format='%(refname)' refs/remotes
+refs/remotes/origin/HEAD
+refs/remotes/origin/main
+[exit 0]
+
+$ tmux list-windows -t primary -F '#{window_name}'
+01M4VNND521J15NXACKYQ4ZHS6
+fm-gl-arm
+fm-gl-landed
+fm-gl-stale
+fm-gl-open
+[exit 0]
+
+$ cd /tmp/fm-lab.zaEFbL/projects/fixture-td && treehouse status 2>/dev/null | grep -E '^[0-9]' | cut -c1-150
+1     in-use       /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/1/fixture-td  [fm/gl-landed]
+2     in-use       /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/2/fixture-td  [fm/gl-stale]
+3     in-use       /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/3/fixture-td  [fm/gl-open]
+[exit 0]
+
+$ tasks-axi list --file data/backlog.md 2>&1 | head -20
+count: 3
+tasks[3]{id,state,kind,repo,title}:
+  gl-open,in_flight,ship,"-",GitLab fixture task gl-open
+  gl-stale,in_flight,ship,"-",GitLab fixture task gl-stale
+  gl-landed,in_flight,ship,"-",GitLab fixture task gl-landed
+help[2]:
+  - Run `tasks-axi show <id> --file=data/backlog.md` for full notes on a task
+  - Run `tasks-axi ready --file=data/backlog.md` to see unblocked queued work
+[exit 0]
+
+# the merge watch on the merged merge request fires: this is the wake that sends firstmate to teardown
+$ bash state/gl-landed.check.sh; echo "poll-exit=$?"
+merged
+poll-exit=0
+[exit 0]
+

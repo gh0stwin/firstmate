@@ -1,0 +1,61 @@
+# === PRE-EXISTING, OUTSIDE THIS CHANGE: teardown's lsof-less process-group fallback signals the wrong pane ===
+# Observed while replaying the interrupted cleanup of gl-held2 (11-captain-hold.log). bin/fm-teardown.sh's
+# reap_task_backend_process_group is not touched by this change (same code at base 7df545b).
+
+$ command -v lsof || echo "lsof: NOT on PATH"
+lsof: NOT on PATH
+
+# with no lsof, teardown resolves the task pane with: tmux display-message -p -t <window> '#{pane_pid}'
+# tmux answers that for a window that does not exist with ANOTHER pane instead of failing:
+$ tmux display-message -p -t primary:fm-does-not-exist '#{window_name} pane_pid=#{pane_pid}'; echo rc=$?
+fm-gl-stale pane_pid=3187410
+rc=0
+$ tmux list-panes -t primary:fm-does-not-exist -F '#{pane_pid}'; echo rc=$?   # a strict command, for contrast
+can't find window: fm-does-not-exist
+rc=1
+
+# lab windows before the replay (gl-held2's own window was already closed by the interrupted first attempt):
+fm-gl-arm 3052175
+fm-gl-stale 3187410
+fm-gl-open 3188514
+drv 3578753
+replay-invoker 3578759
+
+$ fm-teardown.sh gl-held2      # the replay
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+teardown: reaping leaked worktree process group for gl-held2: 3188514
+teardown: force-killing leaked worktree process group for gl-held2: 3188514
+A new version of treehouse is available: v3.1.1 → v3.1.3
+Run "treehouse update" to update
+
+🌳 Worktree returned to pool.
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+fixture-td: already current
+teardown gl-held2 complete (window primary:fm-gl-held2, worktree /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/1/fixture-td)
+Backlog: gl-held2 is closed in /tmp/fm-lab.zaEFbL/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+[exit 0]
+
+# lab windows after: fm-gl-open - a different, live task whose own teardown had just been REFUSED - lost its pane
+fm-gl-arm 3052175
+fm-gl-stale 3187410
+drv 3578753
+replay-invoker 3578759
+
+# consequence for that other task: its pane held the interactive 'treehouse get' subshell, so killing the group
+# made treehouse return its slot - the worker copy was detached and reset to the default branch:
+$ treehouse status   # in the teardown project clone
+1     available    /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/1/fixture-td  (detached)
+2     in-use       /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/2/fixture-td  [fm/gl-stale]
+3     available    /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/3/fixture-td  (detached)
+$ git -C <gl-open slot> reflog -3 HEAD
+ecb019b HEAD@{0} checkout: moving from fm/gl-open to HEAD
+ecb019b HEAD@{1} checkout: moving from dccd89dcdf5277ef3f32be37afee4ba3daf4204b to fm/gl-open
+dccd89d HEAD@{2} 
+# gl-open's task record is still present and its commits survive on the local branch ref (and, here, on the
+# forge); uncommitted work in that copy would have been discarded by the slot reset.
+$ ls state/gl-open.meta; git branch --list fm/gl-open
+gl-open.meta
+fm/gl-open ecb019b
+
+# The first replay attempt in 11-captain-hold.log ran inside the driver pane and signalled that pane's own
+# group (2998518) the same way, which is why that transcript ends mid-command.

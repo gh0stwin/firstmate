@@ -1,0 +1,34 @@
+# === ADVERSARIAL: a GitLab merge request URL whose namespace has a segment named 'pull' ===
+# No such namespace can be created for a test, so the remote here is a disposable local bare
+# repository carrying refs/merge-requests/7/head; the script under test is the real one.
+$ grep -E '^(pr|pr_head)=' state/gl-pull.meta
+pr=https://gitlab.com/acme/pull/-/merge_requests/7
+pr_head=36d24c4f482491ed97344e338b8051603ac4618e
+[exit 0]
+
+$ git -C /tmp/fm-lab.zaEFbL/scratch/pullseg/origin.git rev-parse refs/merge-requests/7/head
+532799a2d3ace896f049c04156d9f5492cc71f3e
+[exit 0]
+
+# the review must compare the fresh head (two files), never the stale recorded one (one file)
+$ fm-review-diff.sh gl-pull --stat
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ first.txt  | 1 +
+ second.txt | 1 +
+ 2 files changed, 2 insertions(+)
+[exit 0]
+
+$ git -C /tmp/fm-lab.zaEFbL/scratch/pullseg/wt rev-parse refs/fm-review/mr/7/head 2>&1
+532799a2d3ace896f049c04156d9f5492cc71f3e
+[exit 0]
+
+# REPRODUCTION of the reviewed defect: the same case through commit e4b2e73's script, which tested
+# '/pull/' before '/-/merge_requests/' - it silently fell back to the stale recorded head
+$ /tmp/fm-lab.zaEFbL/scratch/old-e4b2e73/bin/fm-review-diff.sh gl-pull --stat
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ first.txt | 1 +
+ 1 file changed, 1 insertion(+)
+[exit 0]
+

@@ -1,0 +1,178 @@
+# === ADVERSARIAL 1: the merge request is still OPEN, and its head ref holds the worker's commits ===
+# refs/merge-requests/2/head contains HEAD (it is HEAD), so only the forge's merged state stands between
+# this in-flight task and a discarded worktree
+  task record state/gl-open.meta: present
+  task window fm-gl-open: open
+  worker copy: branch=fm/gl-open HEAD=ecb019bc033889f2b00105b2a3e9e4fd49dd4827
+  backlog item: in_flight
+
+$ fm-teardown.sh gl-open
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+REFUSED: worktree /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/3/fixture-td has work not on any remote and not landed.
+unpushed commits:
+ecb019b fixture: fix round advances the merge request head
+d0ed8ef fixture: gate live validation change
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+[exit 1]
+
+# decision path of that same run (bash xtrace, filtered to the landed-work proof):
++ work_is_landed: pr_is_merged fm/gl-open
++ pr_is_merged: target=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
++ pr_is_merged: case "$target" in
++ pr_is_merged: gitlab_mr_is_merged
++ gitlab_mr_is_merged: '[' gitlab = gitlab ']'
++ gitlab_mr_is_merged: fm_pr_gitlab_read_record gitlab.com gh0stwin/firstmate-gitlab-port-fixture 2
+++ fm_pr_gitlab_read_record: glab mr view 2 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json
++ fm_pr_gitlab_read_record: FM_PR_RECORD_STATE=opened
++ fm_pr_gitlab_read_record: FM_PR_RECORD_MERGED=false
++ gitlab_mr_is_merged: '[' false = true ']'
++ gitlab_mr_is_merged: return 1
++ pr_is_merged: return 1
++ work_is_landed: content_in_default
++ content_in_default: '[' 772f1e4afbb5866c4385711ef3999d8762057975 = 7e9d03aaa75e3a435bb447e4cf896b45f92e51bc ']'
+
+# nothing was discarded:
+  task record state/gl-open.meta: present
+  task window fm-gl-open: open
+  worker copy: branch=fm/gl-open HEAD=ecb019bc033889f2b00105b2a3e9e4fd49dd4827
+  backlog item: in_flight
+
+# === ADVERSARIAL 2: the merge request IS merged, but the worker committed again afterwards ===
+  task record state/gl-stale.meta: present
+  task window fm-gl-stale: open
+  worker copy: branch=fm/gl-stale HEAD=1faaadd91c3defda99b5c48b0c6de07119604a6c
+  backlog item: in_flight
+
+$ fm-teardown.sh gl-stale
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+REFUSED: worktree /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/2/fixture-td has work not on any remote and not landed.
+unpushed commits:
+1faaadd local follow-up after the merge
+852919f advance head for fresh-fetch proof
+d93a01f live evidence change
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+[exit 1]
+
+# decision path of that same run (bash xtrace, filtered to the landed-work proof):
++ work_is_landed: pr_is_merged fm/gl-stale
++ pr_is_merged: target=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/1
++ pr_is_merged: case "$target" in
++ pr_is_merged: gitlab_mr_is_merged
++ gitlab_mr_is_merged: '[' gitlab = gitlab ']'
++ gitlab_mr_is_merged: fm_pr_gitlab_read_record gitlab.com gh0stwin/firstmate-gitlab-port-fixture 1
+++ fm_pr_gitlab_read_record: glab mr view 1 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json
++ fm_pr_gitlab_read_record: FM_PR_RECORD_STATE=merged
++ fm_pr_gitlab_read_record: FM_PR_RECORD_MERGED=true
++ gitlab_mr_is_merged: '[' true = true ']'
+++ gitlab_mr_is_merged: fetch_merge_request_head 1
+++ fetch_merge_request_head: git -C $LAB/pool/.treehouse/fixture-td-7ca305/2/fixture-td remote get-url origin
+++ fetch_merge_request_head: git -C $LAB/pool/.treehouse/fixture-td-7ca305/2/fixture-td fetch --quiet origin +refs/merge-requests/1/head:refs/fm-review/mr/1/head
++++ fetch_merge_request_head: git -C $LAB/pool/.treehouse/fixture-td-7ca305/2/fixture-td rev-parse --verify 'refs/fm-review/mr/1/head^{commit}'
+++ fetch_merge_request_head: resolved=852919f4e3dd57a222f6ab3b4e825138eed149ed
+++ fetch_merge_request_head: '[' -n 852919f4e3dd57a222f6ab3b4e825138eed149ed ']'
+++ fetch_merge_request_head: printf %s 852919f4e3dd57a222f6ab3b4e825138eed149ed
++ gitlab_mr_is_merged: head=852919f4e3dd57a222f6ab3b4e825138eed149ed
+++ gitlab_mr_is_merged: git -C $LAB/pool/.treehouse/fixture-td-7ca305/2/fixture-td rev-parse --verify HEAD
++ gitlab_mr_is_merged: current=1faaadd91c3defda99b5c48b0c6de07119604a6c
++ gitlab_mr_is_merged: git -C $LAB/pool/.treehouse/fixture-td-7ca305/2/fixture-td merge-base --is-ancestor 1faaadd91c3defda99b5c48b0c6de07119604a6c 852919f4e3dd57a222f6ab3b4e825138eed149ed
++ gitlab_mr_is_merged: unpushed_patches_are_in_pr_head 852919f4e3dd57a222f6ab3b4e825138eed149ed
++ gitlab_mr_is_merged: '[' 0 = 1 ']'
++ gitlab_mr_is_merged: return 1
++ pr_is_merged: return 1
++ work_is_landed: content_in_default
++ content_in_default: '[' 13feb1b93509a82f8b7ecae611f2574d4bdb67e2 = 7e9d03aaa75e3a435bb447e4cf896b45f92e51bc ']'
+
+# nothing was discarded:
+  task record state/gl-stale.meta: present
+  task window fm-gl-stale: open
+  worker copy: branch=fm/gl-stale HEAD=1faaadd91c3defda99b5c48b0c6de07119604a6c
+  backlog item: in_flight
+
+# === LANDED: merged merge request, local work contained in refs/merge-requests/1/head ===
+# (squash-merged, source branch deleted: these commits are on no branch of the forge any more)
+  task record state/gl-landed.meta: present
+  task window fm-gl-landed: open
+  worker copy: branch=fm/gl-landed HEAD=852919f4e3dd57a222f6ab3b4e825138eed149ed
+  backlog item: in_flight
+
+$ fm-teardown.sh gl-landed
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+teardown: reaping leaked worktree process group for gl-landed: 3186182
+teardown: force-killing leaked worktree process group for gl-landed: 3186182
+A new version of treehouse is available: v3.1.1 → v3.1.3
+Run "treehouse update" to update
+
+🌳 Worktree returned to pool.
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+fixture-td: already current
+teardown gl-landed complete (window primary:fm-gl-landed, worktree /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/1/fixture-td)
+Backlog: gl-landed is closed in /tmp/fm-lab.zaEFbL/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+[exit 0]
+
+# decision path of that same run (bash xtrace, filtered to the landed-work proof):
++ work_is_landed: pr_is_merged fm/gl-landed
++ pr_is_merged: target=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/1
++ pr_is_merged: case "$target" in
++ pr_is_merged: gitlab_mr_is_merged
++ gitlab_mr_is_merged: '[' gitlab = gitlab ']'
++ gitlab_mr_is_merged: fm_pr_gitlab_read_record gitlab.com gh0stwin/firstmate-gitlab-port-fixture 1
+++ fm_pr_gitlab_read_record: glab mr view 1 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json
++ fm_pr_gitlab_read_record: FM_PR_RECORD_STATE=merged
++ fm_pr_gitlab_read_record: FM_PR_RECORD_MERGED=true
++ gitlab_mr_is_merged: '[' true = true ']'
+++ gitlab_mr_is_merged: fetch_merge_request_head 1
+++ fetch_merge_request_head: git -C $LAB/pool/.treehouse/fixture-td-7ca305/1/fixture-td remote get-url origin
+++ fetch_merge_request_head: git -C $LAB/pool/.treehouse/fixture-td-7ca305/1/fixture-td fetch --quiet origin +refs/merge-requests/1/head:refs/fm-review/mr/1/head
++++ fetch_merge_request_head: git -C $LAB/pool/.treehouse/fixture-td-7ca305/1/fixture-td rev-parse --verify 'refs/fm-review/mr/1/head^{commit}'
+++ fetch_merge_request_head: resolved=852919f4e3dd57a222f6ab3b4e825138eed149ed
+++ fetch_merge_request_head: '[' -n 852919f4e3dd57a222f6ab3b4e825138eed149ed ']'
+++ fetch_merge_request_head: printf %s 852919f4e3dd57a222f6ab3b4e825138eed149ed
++ gitlab_mr_is_merged: head=852919f4e3dd57a222f6ab3b4e825138eed149ed
+++ gitlab_mr_is_merged: git -C $LAB/pool/.treehouse/fixture-td-7ca305/1/fixture-td rev-parse --verify HEAD
++ gitlab_mr_is_merged: current=852919f4e3dd57a222f6ab3b4e825138eed149ed
++ gitlab_mr_is_merged: git -C $LAB/pool/.treehouse/fixture-td-7ca305/1/fixture-td merge-base --is-ancestor 852919f4e3dd57a222f6ab3b4e825138eed149ed 852919f4e3dd57a222f6ab3b4e825138eed149ed
++ gitlab_mr_is_merged: landed=1
++ gitlab_mr_is_merged: '[' 1 = 1 ']'
++ gitlab_mr_is_merged: return 0
++ pr_is_merged: return 0
++ work_is_landed: return 0
+
+# the task is gone and its slot is back in the pool:
+  task record state/gl-landed.meta: removed
+  task window fm-gl-landed: closed
+  backlog item: done
+
+$ cd /tmp/fm-lab.zaEFbL/projects/fixture-td && treehouse status 2>/dev/null | grep -E '^[0-9]' | cut -c1-120
+1     available    /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/1/fixture-td  (detached)
+2     in-use       /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/2/fixture-td  [fm/gl-stale]
+3     in-use       /tmp/fm-lab.zaEFbL/pool/.treehouse/fixture-td-7ca305/3/fixture-td  [fm/gl-open]
+[exit 0]
+
+$ ls state | grep -c '^gl-landed' ; ls state | grep -E '^gl-(open|stale)\.meta'
+0
+gl-open.meta
+gl-stale.meta
+[exit 0]
+
+# the backlog item was closed with the merge request recorded as a labelled note (tasks-axi types --pr links as GitHub/Forgejo only)
+$ tasks-axi show gl-landed --file data/backlog.md --full
+task:
+  id: gl-landed
+  title: GitLab fixture task gl-landed
+  state: done
+  blocked: no
+  blocked_by: none
+  held: no
+  hold_reason: "-"
+  hold_kind: "-"
+  hold_until: "-"
+  kind: ship
+  repo: "-"
+  priority: "-"
+  created: "-"
+  closed: 2026-10-13
+  deps: none
+  links: none
+  body: "GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/1"
+[exit 0]
+

@@ -1,0 +1,86 @@
+# === the real merge request is a draft on gitlab.com ===
+$ cd /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture && glab-axi mr view 2 --full | grep -E '^ *(iid|state|draft|sha|head_sha|source_branch|target_branch|web_url|url):'
+  iid: 2
+  state: opened
+  draft: yes
+  source_branch: fm/gl-arm
+  target_branch: main
+  head_sha: d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+  web_url: "https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2"
+[exit 0]
+
+# task record and state directory before arming
+$ sha256sum state/gl-arm.meta; ls -A state | sort
+9e6e5da998b6e456b561a217ccd41074d4aec755d19cdeef561c30d09b29032f  state/gl-arm.meta
+gl-arm.meta
+[exit 0]
+
+# === ADVERSARIAL: arming the merge watch on a draft must refuse and record/arm nothing ===
+$ fm-pr-check.sh gl-arm https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+error: https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+[exit 1]
+
+# task record is byte-identical, no pr= recorded, no state/gl-arm.check.sh armed
+$ sha256sum state/gl-arm.meta; grep -c -E '^(pr|pr_head)=' state/gl-arm.meta; ls -A state | sort
+9e6e5da998b6e456b561a217ccd41074d4aec755d19cdeef561c30d09b29032f  state/gl-arm.meta
+0
+gl-arm.meta
+[exit 0]
+
+# === the brief's remedy: mark it ready with glab-axi, read it back, arm again ===
+$ cd /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture && glab-axi mr update 2 --ready
+updated:
+  iid: 2
+  title: "fixture: gate live validation (throwaway)"
+  state: opened
+  draft: no
+help[1]:
+  Run `glab-axi mr view 2 --full` to see updated state
+[exit 0]
+
+$ cd /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture && glab-axi mr view 2 --full | grep -E '^ *(state|draft|sha|head_sha):'
+  state: opened
+  draft: no
+  head_sha: d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+[exit 0]
+
+$ fm-pr-check.sh gl-arm https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+armed: state/gl-arm.check.sh
+[exit 0]
+
+# pr= and pr_head= are recorded; pr_head equals the forge's own head ref for the merge request
+$ grep -E '^(pr|pr_head)=' state/gl-arm.meta
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2
+pr_head=d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+[exit 0]
+
+$ git ls-remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git refs/merge-requests/2/head
+d0ed8ef3e52a3d45da513a614da0ce3e91356b01	refs/merge-requests/2/head
+[exit 0]
+
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture rev-parse HEAD
+d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+[exit 0]
+
+$ ls -A state | sort
+.guard-watcher-stale-banner
+contributions.check-trust
+contributions.check.sh
+gl-arm.check.sh
+gl-arm.meta
+gl-arm.pr-poll
+gl-arm.pr-poll-registration
+[exit 0]
+
+# the armed poll is silent on the still-open merge request (it wakes only on an exact merged)
+$ bash state/gl-arm.check.sh; echo "poll-exit=$?"
+poll-exit=0
+[exit 0]
+

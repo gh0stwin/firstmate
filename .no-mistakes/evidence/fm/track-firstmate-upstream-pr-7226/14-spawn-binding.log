@@ -1,0 +1,38 @@
+# === ADVERSARIAL: a ship spawn must refuse a brief whose forge disagrees with the registered binding ===
+# 1) project registered forge=gitlab, brief scaffolded without the binding (GitHub-only instructions)
+$ fm-project-mode.sh --forge firstmate-gitlab-port-fixture; grep -n 'Delivery contract' data/gh-plain/brief.md
+gitlab
+91:Delivery contract: mode=direct-PR
+[exit 0]
+
+$ tmux list-windows -t primary -F '#{window_name}' | sort | tr '\n' ' '
+drv fm-gl-arm fm-gl-stale replay-invoker [exit 0]
+
+$ fm-spawn.sh gh-plain projects/firstmate-gitlab-port-fixture --mode direct-PR --yolo off
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+error: forge mismatch for gh-plain: firstmate-gitlab-port-fixture is registered forge=gitlab but /tmp/fm-lab.zaEFbL/data/gh-plain/brief.md records forge=none; keep the filled ## Captain's intent and ## Firstmate spec bodies, remove /tmp/fm-lab.zaEFbL/data/gh-plain/brief.md, re-scaffold it with fm-brief.sh gh-plain firstmate-gitlab-port-fixture --mode direct-PR --forge gitlab, then re-fill those two subsections, so the worker's publication matches the project's forge
+[exit 1]
+
+$ ls state/gh-plain.meta 2>&1 | sed 's#.*No such file.*#state/gh-plain.meta: absent (no task recorded)#'; tmux list-windows -t primary -F '#{window_name}' | sort | tr '\n' ' '
+state/gh-plain.meta: absent (no task recorded)
+drv fm-gl-arm fm-gl-stale replay-invoker [exit 0]
+
+# 2) the reverse: an unbound project, a brief that claims forge=gitlab
+$ fm-brief.sh gl-on-plain fixture-plain --mode no-mistakes --forge gitlab
+scaffolded: /tmp/fm-lab.zaEFbL/data/gl-on-plain/brief.md (ship, mode=no-mistakes forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+[exit 0]
+
+$ fm-project-mode.sh --forge fixture-plain; grep -n 'Delivery contract' data/gl-on-plain/brief.md
+none
+94:Delivery contract: mode=no-mistakes forge=gitlab
+[exit 0]
+
+$ fm-spawn.sh gl-on-plain projects/fixture-plain --mode no-mistakes --yolo off
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+error: forge mismatch for gl-on-plain: fixture-plain is registered forge=none but /tmp/fm-lab.zaEFbL/data/gl-on-plain/brief.md records forge=gitlab; keep the filled ## Captain's intent and ## Firstmate spec bodies, remove /tmp/fm-lab.zaEFbL/data/gl-on-plain/brief.md, re-scaffold it with fm-brief.sh gl-on-plain fixture-plain --mode no-mistakes, then re-fill those two subsections, so the worker's publication matches the project's forge
+[exit 1]
+
+$ ls state/gl-on-plain.meta 2>&1 | sed 's#.*No such file.*#state/gl-on-plain.meta: absent (no task recorded)#'; tmux list-windows -t primary -F '#{window_name}' | sort | tr '\n' ' '
+state/gl-on-plain.meta: absent (no task recorded)
+drv fm-gl-arm fm-gl-stale replay-invoker [exit 0]
+

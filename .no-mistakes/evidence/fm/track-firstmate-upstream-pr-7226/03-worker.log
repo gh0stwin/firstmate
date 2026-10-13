@@ -1,0 +1,59 @@
+# === a direct-PR ship task on the forge=gitlab project: window + treehouse slot + task record ===
+$ cat state/gl-arm.meta
+window=primary:fm-gl-arm
+endpoint_task_id=gl-arm
+worktree=/tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture
+project=/tmp/fm-lab.zaEFbL/projects/firstmate-gitlab-port-fixture
+harness=claude
+kind=ship
+mode=direct-PR
+branch=fm/gl-arm
+tasktmp=/tmp/fm-lab.zaEFbL/data/gl-arm/tmp
+model=default
+effort=default
+spawn_gen=s1791931397.3052167.22793
+[exit 0]
+
+$ tmux list-windows -t primary -F '#{window_name} #{pane_current_path}'
+01M4VNND521J15NXACKYQ4ZHS6 /tmp/fm-lab.zaEFbL
+fm-gl-arm /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture
+[exit 0]
+
+$ cd /tmp/fm-lab.zaEFbL/projects/firstmate-gitlab-port-fixture && treehouse status
+A new version of treehouse is available: v3.1.1 → v3.1.3
+Run "treehouse update" to update
+
+base  main  (repository default)
+1     in-use       /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture  (detached)
+                   zsh (3052591), zsh (3052981), zsh (3052983), conda (3052985)
+[exit 0]
+
+# === the worker follows its brief: commit on fm/gl-arm, push, open the merge request with glab-axi ===
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture checkout -q -b fm/gl-arm
+[exit 0]
+
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture commit -q -am fixture: gate live validation change
+[exit 0]
+
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture push -q -o ci.skip -u origin fm/gl-arm
+remote: 
+remote: To create a merge request for fm/gl-arm, visit:        
+remote:   https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/new?merge_request%5Bsource_branch%5D=fm%2Fgl-arm        
+remote: 
+[exit 0]
+
+# (opened as a DRAFT on purpose: the next scenario is firstmate refusing to arm on it)
+$ cd /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture && glab-axi mr create --title 'fixture: gate live validation (throwaway)' --source-branch fm/gl-arm --target-branch main --draft --body 'Throwaway merge request used to validate firstmate GitLab support against a real forge. It is closed, never merged, when the validation run ends.'
+created:
+  iid: 2
+  title: "Draft: fixture: gate live validation (throwaway)"
+  url: "https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/2"
+help[2]:
+  Run `glab-axi mr view 2 --full` to see the merge request
+  Run `glab-axi ci status --mr 2` to check its pipeline
+[exit 0]
+
+$ git -C /tmp/fm-lab.zaEFbL/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture rev-parse HEAD
+d0ed8ef3e52a3d45da513a614da0ce3e91356b01
+[exit 0]
+

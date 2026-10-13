@@ -1,0 +1,91 @@
+# === project-add intake: fm-forge-detect.sh proposes a binding from the clone's origin (no network) ===
+# real clone of the public gitlab.com fixture
+$ git -C projects/firstmate-gitlab-port-fixture remote get-url origin
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+[exit 0]
+
+$ fm-forge-detect.sh projects/firstmate-gitlab-port-fixture
+forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git is on gitlab.com
+[exit 0]
+
+# scp-like ssh spelling of gitlab.com
+$ fm-forge-detect.sh scratch/ssh
+forge=gitlab evidence=origin remote git@gitlab.com:example-group/example-project.git is on gitlab.com
+[exit 0]
+
+# ADVERSARIAL: self-hosted GitLab host - must NOT be proposed (any host can serve anything)
+$ fm-forge-detect.sh scratch/selfhosted
+forge=none
+[exit 0]
+
+# ADVERSARIAL: look-alike hosts must not match gitlab.com
+$ fm-forge-detect.sh scratch/spoof1
+forge=none
+[exit 0]
+
+$ fm-forge-detect.sh scratch/spoof2
+forge=none
+[exit 0]
+
+$ fm-forge-detect.sh scratch/spoof3
+forge=none
+[exit 0]
+
+# REGRESSION: a GitHub origin still proposes none; a Gerrit port still proposes gerrit
+$ fm-forge-detect.sh scratch/github
+forge=none
+[exit 0]
+
+$ fm-forge-detect.sh scratch/gerrit
+forge=gerrit evidence=origin remote ssh://review.example.com:29418/project uses SSH port 29418
+[exit 0]
+
+# === registry binding: fm-project-mode.sh reads forge=gitlab back ===
+$ cat data/projects.md
+# Projects
+
+- firstmate-gitlab-port-fixture [direct-PR forge=gitlab] - public GitLab fixture (added 2026-10-13)
+- fixture-yolo [no-mistakes +yolo forge=gitlab] - yolo twin (added 2026-10-13)
+- fixture-gerrit [no-mistakes +yolo forge=gerrit] - gerrit twin (added 2026-10-13)
+- fixture-typo [direct-PR forge=gitlabb] - misspelled binding (added 2026-10-13)
+- fixture-local [local-only forge=gitlab] - refused pairing (added 2026-10-13)
+- fixture-plain [no-mistakes] - unbound project (added 2026-10-13)
+[exit 0]
+
+$ fm-project-mode.sh firstmate-gitlab-port-fixture
+direct-PR off
+[exit 0]
+
+$ fm-project-mode.sh --forge firstmate-gitlab-port-fixture
+gitlab
+[exit 0]
+
+# +yolo stays available on forge=gitlab ...
+$ fm-project-mode.sh fixture-yolo
+no-mistakes on
+[exit 0]
+
+$ fm-project-mode.sh --forge fixture-yolo
+gitlab
+[exit 0]
+
+# ... while forge=gerrit still reports yolo=off (unchanged)
+$ fm-project-mode.sh fixture-gerrit
+refused: +yolo is registered for fixture-gerrit but yolo is inactive for forge=gerrit, so this reports yolo=off: a Gerrit Code-Review+2 is a positive attributed claim that a named human approved, and firstmate must not manufacture one (captain's decision 2026-09-15)
+no-mistakes off
+[exit 0]
+
+# ADVERSARIAL: a misspelled binding and local-only+gitlab are refused, nothing on stdout
+$ fm-project-mode.sh --forge fixture-typo
+refused: unknown forge "gitlabb" registered for fixture-typo in /tmp/fm-lab.zaEFbL/data/projects.md; the accepted values are forge=gerrit, forge=gitlab, and forge=forgejo, or no forge token at all for a forge whose pull requests no-mistakes already drives; correct the registry entry
+[exit 3]
+
+$ fm-project-mode.sh --forge fixture-local
+refused: fixture-local is registered local-only with forge=gitlab in /tmp/fm-lab.zaEFbL/data/projects.md; local-only publishes nothing, so a forge has no meaning there, and its landing would fast-forward local main with content the review server has never seen; register no-mistakes or direct-PR to publish through the forge, or drop the forge token to keep the project local
+[exit 3]
+
+# REGRESSION: an unbound project still answers none
+$ fm-project-mode.sh --forge fixture-plain
+none
+[exit 0]
+
