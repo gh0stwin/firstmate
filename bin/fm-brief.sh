@@ -73,9 +73,10 @@
 # script never infers a forge and never looks the binding up, and bin/fm-spawn.sh
 # refuses a brief whose forge disagrees with the registry. bin/fm-project-mode.sh's
 # header owns what the binding means, and bin/fm-dod-lib.sh owns what `gerrit`
-# and `gitlab` and `forgejo` change for the worker; on `forgejo` the ship
-# brief's forge-CLI rule names tea instead of gh-axi. A forge on --mode
-# local-only is refused, because that mode publishes nothing.
+# and `gitlab` and `forgejo` change for the worker; the ship brief's forge-CLI
+# rule names glab-axi beside gh-axi on `gitlab` and tea instead of gh-axi on
+# `forgejo`. A forge on --mode local-only is refused, because that mode
+# publishes nothing.
 # --shape names how a forge=gerrit task is published, and only `squash` - one
 # change - is accepted: `stack` is refused until a stack can be watched by its
 # membership pinned when its watch is armed, because the merge watch follows one
