@@ -1,0 +1,49 @@
+# firstmate ca86a7ab - a captain-held task whose landed work is the merged real MR !4: teardown proves it landed, keeps the captain call open with the MR as its deliverable, and only the answer closes it
+## setup (lab): a second real treehouse slot at the MR commit, a worker pane, a held backlog item
+slot: <lab>/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture
+$ git -C <slot> log HEAD --not --remotes --oneline
+58d01a1 fixture: gate e2e for the GitLab port re-raise (throwaway) [skip ci]
+firstmate:fm-nm-gl-held pane_pid=2265627
+$ tasks-axi add nm-gl-held ... && tasks-axi start nm-gl-held
+ok: start nm-gl-held -> In flight
+$ bin/fm-captain-hold.sh hold nm-gl-held --reason "captain must choose the follow-up"
+nm-gl-held
+exit=0
+
+## teardown
+$ FM_HOME=<lab> bin/fm-teardown.sh nm-gl-held
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: 416s ago, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+teardown: reaping leaked worktree process group for nm-gl-held: 2265627
+A new version of treehouse is available: v3.1.1 → v3.1.3
+Run "treehouse update" to update
+
+🌳 Worktree returned to pool.
+WARNING: watcher still down (same stale episode; last beat: 420s ago, grace 300s) - full banner already printed this episode.
+firstmate-gitlab-port-fixture: already current
+teardown nm-gl-held complete (window firstmate:fm-nm-gl-held, worktree <lab>/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture)
+Backlog: nm-gl-held stays open in <lab>/data/backlog.md, still held for the captain with its deliverable recorded. Relay the question and close it only with bin/fm-captain-hold.sh answer.
+exit=0
+$ tasks-axi show nm-gl-held --full
+  state: queued
+  held: yes
+  hold_kind: captain
+  body: "Captain hold set: 2026-10-14T04:58:55Z\n\nDeliverable of the finished work: GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4"
+$ ls state/ | grep nm-gl-held
+no task state left
+$ tmux list-windows -a   # lab socket
+no server running on /tmp/fml.B72NsI/tmux-1000/default
+
+## the captain answers
+$ bin/fm-captain-hold.sh answer nm-gl-held --decision-file <lab>/answer.txt
+answered: nm-gl-held
+exit=0
+$ tasks-axi show nm-gl-held --full | grep -E "state:|body:"
+  state: done
+  body: "Resolution recorded by fm-captain-hold.\nDecision digest: 12cda84be0ab441e46e2f8244114418abe6c4fa480b4ba798f8ab598673ac0fa\nResolution mode: answered\n\nCaptain decision:\nProceed with the landed change.\n\nDeliverable of the finished work: GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4"

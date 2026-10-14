@@ -1,0 +1,17 @@
+## merge the throwaway MR for real (squash, source branch deleted on merge, bound to the reviewed head)
+$ glab mr merge 3 -R gh0stwin/firstmate-gitlab-port-fixture --squash --remove-source-branch --sha 9b1b8190199d06e278e18402f6bb50583c69ba9c --squash-message '... [skip ci]' --message '... [skip ci]' --yes
+! No pipeline running on fm/nm-7226-live
+✓ Merged!
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
+[exit 0]
+$ glab mr view 3 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq '{iid,state,sha,squash_commit_sha,merge_commit_sha}'
+{"iid":3,"state":"merged","sha":"9b1b8190199d06e278e18402f6bb50583c69ba9c","squash_commit_sha":"42ebe2051e6e7df5e9ee0b1d18bccc06bfb03155","merge_commit_sha":"333aaffaaf20348784bb5e7aa91e494d2e505f79"}
+[exit 0]
+$ git ls-remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git refs/heads/fm/nm-7226-live refs/merge-requests/3/head   # branch deleted, MR head ref kept
+9b1b8190199d06e278e18402f6bb50583c69ba9c	refs/merge-requests/3/head
+[exit 0]
+## main moves on after the merge: a later commit rewrites the lines the task added, so a content-only check can no longer prove the task landed
+$ git -C $LAB/main-moves-clone push -o ci.skip origin main
+To https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+   333aaff..cc10717  main -> main
+[exit 0]

@@ -1,0 +1,30 @@
+# firstmate ca86a7ab - bin/fm-spawn.sh refuses a ship brief whose forge disagrees with the registered binding (tmux/claude/treehouse are refusing guards on PATH, so a spawn that got past the check could not launch anything)
+# both briefs were scaffolded with bin/fm-brief.sh and had their {TASK}/{FIRSTMATE_SPEC} placeholders filled
+$ grep "Delivery contract" data/gl-sp1/brief.md   # registry: firstmate-gitlab-port-fixture [no-mistakes forge=gitlab]
+Delivery contract: mode=no-mistakes
+$ FM_SPAWN_NO_GUARD=1 bin/fm-spawn.sh gl-sp1 <lab>/projects/firstmate-gitlab-port-fixture claude --mode no-mistakes --yolo off
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+error: forge mismatch for gl-sp1: firstmate-gitlab-port-fixture is registered forge=gitlab but <lab>/data/gl-sp1/brief.md records forge=none; keep the filled ## Captain's intent and ## Firstmate spec bodies, remove <lab>/data/gl-sp1/brief.md, re-scaffold it with fm-brief.sh gl-sp1 firstmate-gitlab-port-fixture --mode no-mistakes --forge gitlab, then re-fill those two subsections, so the worker's publication matches the project's forge
+exit=1
+no task record written
+
+$ grep "Delivery contract" data/gl-sp2/brief.md   # registry: plainproj [no-mistakes], no forge
+Delivery contract: mode=no-mistakes forge=gitlab
+$ FM_SPAWN_NO_GUARD=1 bin/fm-spawn.sh gl-sp2 <lab>/projects/plainproj claude --mode no-mistakes --yolo off
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+error: forge mismatch for gl-sp2: plainproj is registered forge=none but <lab>/data/gl-sp2/brief.md records forge=gitlab; keep the filled ## Captain's intent and ## Firstmate spec bodies, remove <lab>/data/gl-sp2/brief.md, re-scaffold it with fm-brief.sh gl-sp2 plainproj --mode no-mistakes, then re-fill those two subsections, so the worker's publication matches the project's forge
+exit=1
+no task record written
+
+## control: a brief that agrees with the gitlab binding passes the forge check and only stops at the lab launch guards
+$ grep "Delivery contract" data/gl-sp3/brief.md
+Delivery contract: mode=no-mistakes forge=gitlab
+$ FM_SPAWN_NO_GUARD=1 bin/fm-spawn.sh gl-sp3 <lab>/projects/firstmate-gitlab-port-fixture claude --mode no-mistakes --yolo off
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+error: task gl-sp3 has no backlog item in this home, so dispatching it would leave a worker no record owns; add it first (bin/fm-tasks-axi.sh add gl-sp3 '<title>' --kind ship) and re-run
+exit=1
+$ cat <lab>/spawn-guard.log   # the first launch step it reached
+$ ls state/ | grep gl-sp3
+(none)
+
+# note: gl-sp1 and gl-sp2 had no backlog item either, yet stopped at the forge check, so that check runs before the backlog check; gl-sp3 passed it and reached the backlog check, and no lab guard (tmux/claude/treehouse) was ever invoked

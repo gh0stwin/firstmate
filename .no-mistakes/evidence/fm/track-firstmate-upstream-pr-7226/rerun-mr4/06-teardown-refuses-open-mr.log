@@ -1,0 +1,49 @@
+# firstmate ca86a7ab - adversarial: teardown while the real MR is still OPEN; its head ref contains the worker HEAD and no remote-tracking ref does, so only the merged-state read separates this from a discard
+## before
+$ glab mr view 4 -F json | jq -c {state,sha}
+{"state":"opened","sha":"cd73c80b37d2bece1927c7dee5f4b512a21a663a"}
+$ git -C <worktree> rev-parse --abbrev-ref HEAD; git rev-parse HEAD; git log HEAD --not --remotes --oneline
+fm/nm-gl-e2e
+58d01a1e705fa74d3a23a85ac76a32f76cf30b0e
+58d01a1 fixture: gate e2e for the GitLab port re-raise (throwaway) [skip ci]
+$ git -C <worktree> merge-base --is-ancestor HEAD refs/fm-review/mr/4/head && echo contained
+contained in the MR head ref
+$ sha256sum state/nm-gl-e2e.meta
+422b298a472eae217c25c41a791a653dd7b348fe164dbd297b3592c12a3902bd  state/nm-gl-e2e.meta
+$ tmux list-windows -a   # lab socket
+firstmate:fm-nm-gl-e2e pane_pid=1956842
+$ tasks-axi show nm-gl-e2e | state
+state: in_flight
+
+$ FM_HOME=<lab> bin/fm-teardown.sh nm-gl-e2e
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+REFUSED: worktree <lab>/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture has work not on any remote and not landed.
+unpushed commits:
+58d01a1 fixture: gate e2e for the GitLab port re-raise (throwaway) [skip ci]
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+exit=1
+
+## after
+$ glab mr view 4 -F json | jq -c {state,sha}
+{"state":"opened","sha":"cd73c80b37d2bece1927c7dee5f4b512a21a663a"}
+$ git -C <worktree> rev-parse --abbrev-ref HEAD; git rev-parse HEAD; git log HEAD --not --remotes --oneline
+fm/nm-gl-e2e
+58d01a1e705fa74d3a23a85ac76a32f76cf30b0e
+58d01a1 fixture: gate e2e for the GitLab port re-raise (throwaway) [skip ci]
+$ git -C <worktree> merge-base --is-ancestor HEAD refs/fm-review/mr/4/head && echo contained
+contained in the MR head ref
+$ sha256sum state/nm-gl-e2e.meta
+422b298a472eae217c25c41a791a653dd7b348fe164dbd297b3592c12a3902bd  state/nm-gl-e2e.meta
+$ tmux list-windows -a   # lab socket
+firstmate:fm-nm-gl-e2e pane_pid=1956842
+$ tasks-axi show nm-gl-e2e | state
+state: in_flight
+$ ls state/
+.fm-lab-tmux-dir
+.last-watcher-beat
+contributions.check-trust
+contributions.check.sh
+nm-gl-e2e.check.sh
+nm-gl-e2e.meta
+nm-gl-e2e.pr-poll
+nm-gl-e2e.pr-poll-registration

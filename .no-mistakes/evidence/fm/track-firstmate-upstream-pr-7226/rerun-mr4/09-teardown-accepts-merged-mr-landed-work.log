@@ -1,0 +1,85 @@
+# firstmate ca86a7ab - the later local commit is dropped; the worker HEAD is the pre-fix-round commit of the MERGED real MR !4
+$ git -C <worktree> reset --hard HEAD~1
+58d01a1 fixture: gate e2e for the GitLab port re-raise (throwaway) [skip ci]
+$ glab mr view 4 -F json | jq -c {state,sha,squash_commit_sha}
+{"state":"merged","sha":"cd73c80b37d2bece1927c7dee5f4b512a21a663a","squash_commit_sha":"abba7de20493ab7d3f29e8ccf15a3201a9511974"}
+$ git -C <worktree> log HEAD --not --remotes --oneline   # still on no remote-tracking ref (squash merge, source branch deleted)
+58d01a1 fixture: gate e2e for the GitLab port re-raise (throwaway) [skip ci]
+$ git -C <worktree> rev-parse --short refs/remotes/origin/main
+dfcb938
+$ git -C <worktree> merge-tree --write-tree refs/remotes/origin/main HEAD   # the content-in-default fallback cannot accept this copy: the fix round made it diverge
+f4c6677f9181529ff7bdc5188faf8b9bedf5d4d0
+E2E.md
+
+Auto-merging E2E.md
+CONFLICT (add/add): Merge conflict in E2E.md
+merge-tree exit=1
+
+## before teardown
+$ tmux list-windows -a   # lab socket
+firstmate:fm-nm-gl-e2e pane_pid=1956842
+$ (cd <lab>/projects/<fixture> && git log --oneline -1 && TREEHOUSE_ROOT=<lab>/pool treehouse status)
+cc10717 fixture: main moves on after MR !3 (throwaway) [skip ci]
+
+base  main  (repository default)
+1     leased       <lab>/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture  [fm/nm-gl-e2e]  (held by nm-gl-e2e)
+                   sleep (1956842)
+$ tasks-axi show nm-gl-e2e | state
+state: in_flight
+
+$ FM_HOME=<lab> bin/fm-teardown.sh nm-gl-e2e
+fm-gate-refuse: gate agent lifecycle permitted only against lab home <lab>
+teardown: reaping leaked worktree process group for nm-gl-e2e: 1956842
+A new version of treehouse is available: v3.1.1 → v3.1.3
+Run "treehouse update" to update
+
+🌳 Worktree returned to pool.
+firstmate-gitlab-port-fixture: synced cc10717..dfcb938
+teardown nm-gl-e2e complete (window firstmate:fm-nm-gl-e2e, worktree <lab>/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture)
+Backlog: nm-gl-e2e is closed in <lab>/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+exit=0
+
+## after teardown
+$ ls state/
+.fm-lab-tmux-dir
+.last-watcher-beat
+contributions.check-trust
+contributions.check.sh
+home-summary.json
+terminal-outcomes
+$ tmux list-windows -a   # lab socket: the worker window was closed
+no server running on /tmp/fml.B72NsI/tmux-1000/default
+$ (cd <lab>/projects/<fixture> && git log --oneline -1 && TREEHOUSE_ROOT=<lab>/pool treehouse status)
+dfcb938 Merge branch 'fm/nm-gl-e2e' into 'main'
+
+base  main  (repository default)
+1     available    <lab>/pool/.treehouse/firstmate-gitlab-port-fixture-7ca305/1/firstmate-gitlab-port-fixture  (detached)
+$ git -C <worktree> status -sb; git branch --list fm/nm-gl-e2e
+## HEAD (no branch)
+$ tasks-axi show nm-gl-e2e --full
+task:
+  id: nm-gl-e2e
+  title: GitLab port gate e2e (throwaway fixture MR !4)
+  state: done
+  blocked: no
+  blocked_by: none
+  held: no
+  hold_reason: "-"
+  hold_kind: "-"
+  hold_until: "-"
+  kind: ship
+  repo: "-"
+  priority: "-"
+  created: "-"
+  closed: 2026-10-14
+  deps: none
+  links: none
+  body: "GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4"
+$ cat data/backlog.md
+# Backlog
+
+## In flight
+## Queued
+## Done
+- [x] nm-gl-e2e - GitLab port gate e2e (throwaway fixture MR !4) (kind: ship) (done 2026-10-14)
+  GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4

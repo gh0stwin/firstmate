@@ -1,0 +1,21 @@
+## S2 (adversarial, jq-soft ruling): without jq on PATH the arm neither refuses the draft nor records pr_head; glab is still present
+$ PATH=<PATH without jq> command -v jq glab bash
+jq: not found
+/tmp/fm-gate-driver.sm1Jez/path-without-jq-/glab
+/tmp/fm-gate-driver.sm1Jez/path-without-jq-/bash
+[exit 0]
+$ (cd $LAB/wt && glab-axi mr view 3 --full | grep -E '^ *draft:')   # still a draft
+  draft: yes
+[exit 0]
+$ PATH=<PATH without jq> fm-pr-check.sh nm-7226-live https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
+contributions: jq unavailable; coverage is unconfirmed
+armed: state/nm-7226-live.check.sh
+[exit 0]
+$ grep -E '^(pr|pr_head)=' $LAB/state/nm-7226-live.meta
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
+[exit 0]
+$ ls -A $LAB/state | grep -E 'check|pr-poll'
+nm-7226-live.check.sh
+nm-7226-live.pr-poll
+nm-7226-live.pr-poll-registration
+[exit 0]

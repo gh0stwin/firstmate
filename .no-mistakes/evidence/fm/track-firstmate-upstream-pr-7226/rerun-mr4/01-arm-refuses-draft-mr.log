@@ -1,0 +1,16 @@
+# firstmate ca86a7ab - live arm against a real draft GitLab merge request
+$ glab mr view 4 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq '{iid,state,draft,work_in_progress,sha}'
+{"iid":4,"state":"opened","draft":true,"work_in_progress":true,"sha":"58d01a1e705fa74d3a23a85ac76a32f76cf30b0e"}
+$ sha256sum state/nm-gl-e2e.meta; ls state/
+c161ec0a43733f162a1cde1ea5fc0d5bc6c209171d3c72b296407e5b1f18531e  state/nm-gl-e2e.meta
+.fm-lab-tmux-dir
+.last-watcher-beat
+nm-gl-e2e.meta
+$ FM_HOME=<lab> bin/fm-pr-check.sh nm-gl-e2e https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+error: https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+exit=1
+$ sha256sum state/nm-gl-e2e.meta; ls state/   # after the refusal
+c161ec0a43733f162a1cde1ea5fc0d5bc6c209171d3c72b296407e5b1f18531e  state/nm-gl-e2e.meta
+.fm-lab-tmux-dir
+.last-watcher-beat
+nm-gl-e2e.meta

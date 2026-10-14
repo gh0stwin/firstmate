@@ -1,0 +1,9 @@
+ok - an origin on SSH port 29418 proposes forge=gerrit and names the evidence
+ok - a refs/for/ push refspec proposes forge=gerrit and names the evidence
+ok - a gitlab.com origin proposes forge=gitlab and names the evidence
+ok - a self-hosted GitLab origin proposes forge=none, because any host can serve anything
+ok - a remote carrying neither Gerrit fact proposes forge=none
+ok - detection reads the clone's config and changes nothing
+ok - a directory that is not a git work tree is refused with exit 2
+# all fm-forge-detect tests passed
+exit=0

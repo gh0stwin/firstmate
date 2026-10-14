@@ -1,0 +1,60 @@
+# firstmate ca86a7ab - project-add intake proposal and the registered forge binding, in the lab home
+## intake: bin/fm-forge-detect.sh
+$ git -C <lab>/projects/firstmate-gitlab-port-fixture remote get-url origin
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+$ bin/fm-forge-detect.sh <lab>/projects/firstmate-gitlab-port-fixture   # the real gitlab.com clone
+forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git is on gitlab.com
+exit=0
+$ bin/fm-forge-detect.sh <clone with origin git@gitlab.com:gh0stwin/firstmate-gitlab-port-fixture.git>
+forge=gitlab evidence=origin remote git@gitlab.com:gh0stwin/firstmate-gitlab-port-fixture.git is on gitlab.com
+exit=0
+$ bin/fm-forge-detect.sh <clone with origin ssh://git@gitlab.com/gh0stwin/x.git>
+forge=gitlab evidence=origin remote ssh://git@gitlab.com/gh0stwin/x.git is on gitlab.com
+exit=0
+$ bin/fm-forge-detect.sh <clone with origin https://gitlab.com.evil.example/gh0stwin/x.git>
+forge=none
+exit=0
+$ bin/fm-forge-detect.sh <clone with origin https://evilgitlab.com/gh0stwin/x.git>
+forge=none
+exit=0
+$ bin/fm-forge-detect.sh <clone with origin https://gitlab.example.com/group/x.git>
+forge=none
+exit=0
+$ bin/fm-forge-detect.sh <clone with origin ssh://git@gitlab.com:2222/gh0stwin/x.git>
+forge=none
+exit=0
+$ bin/fm-forge-detect.sh <clone with origin ssh://someone@review.example:29418/group/x>
+forge=gerrit evidence=origin remote ssh://someone@review.example:29418/group/x uses SSH port 29418
+exit=0
+
+## registry: bin/fm-project-mode.sh against <lab>/data/projects.md
+$ cat data/projects.md
+# Projects
+
+- firstmate-gitlab-port-fixture [no-mistakes forge=gitlab] - throwaway GitLab fixture for the gate e2e (added 2026-10-14)
+- gl-yolo [no-mistakes +yolo forge=gitlab] - lab entry (added 2026-10-14)
+- gl-local [local-only forge=gitlab] - lab entry (added 2026-10-14)
+- gl-typo [no-mistakes forge=gitlb] - lab entry (added 2026-10-14)
+- gr-yolo [no-mistakes +yolo forge=gerrit] - lab entry (added 2026-10-14)
+$ bin/fm-project-mode.sh firstmate-gitlab-port-fixture
+no-mistakes off
+exit=0
+$ bin/fm-project-mode.sh --forge firstmate-gitlab-port-fixture
+gitlab
+exit=0
+$ bin/fm-project-mode.sh gl-yolo
+no-mistakes on
+exit=0
+$ bin/fm-project-mode.sh --forge gl-yolo
+gitlab
+exit=0
+$ bin/fm-project-mode.sh gr-yolo
+refused: +yolo is registered for gr-yolo but yolo is inactive for forge=gerrit, so this reports yolo=off: a Gerrit Code-Review+2 is a positive attributed claim that a named human approved, and firstmate must not manufacture one (captain's decision 2026-09-15)
+no-mistakes off
+exit=0
+$ bin/fm-project-mode.sh gl-local
+refused: gl-local is registered local-only with forge=gitlab in <lab>/data/projects.md; local-only publishes nothing, so a forge has no meaning there, and its landing would fast-forward local main with content the review server has never seen; register no-mistakes or direct-PR to publish through the forge, or drop the forge token to keep the project local
+exit=3
+$ bin/fm-project-mode.sh --forge gl-typo
+refused: unknown forge "gitlb" registered for gl-typo in <lab>/data/projects.md; the accepted values are forge=gerrit, forge=gitlab, and forge=forgejo, or no forge token at all for a forge whose pull requests no-mistakes already drives; correct the registry entry
+exit=3

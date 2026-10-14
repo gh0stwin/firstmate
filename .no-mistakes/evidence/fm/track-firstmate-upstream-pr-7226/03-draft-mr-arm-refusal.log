@@ -1,0 +1,63 @@
+## a trivial throwaway change on the task branch, pushed with ci.skip (the fixture has no runner)
+$ git -C $LAB/wt log --oneline -1
+7d1d801 fixture: gate live validation first commit (throwaway)
+[exit 0]
+$ git -C $LAB/wt push -o ci.skip -u origin fm/nm-7226-live
+remote: 
+remote: To create a merge request for fm/nm-7226-live, visit:        
+remote:   https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/new?merge_request%5Bsource_branch%5D=fm%2Fnm-7226-live        
+remote: 
+To https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+ * [new branch]      fm/nm-7226-live -> fm/nm-7226-live
+branch 'fm/nm-7226-live' set up to track 'origin/fm/nm-7226-live'.
+[exit 0]
+$ glab mr create --draft -R gh0stwin/firstmate-gitlab-port-fixture --source-branch fm/nm-7226-live --target-branch main --title 'fixture: GitLab port gate re-validation (throwaway)' --yes
+Failed to create merge request. Created recovery file: /home/node/.config/glab-cli/recover/gh0stwin/firstmate-gitlab-port-fixture/mr.json
+Run the command again with the '--recover' option to retry.
+          
+   ERROR  
+          
+  None of the git remotes configured for this repository point to a known GitLab host. Please use `glab auth login` to
+  authenticate and configure a new host for glab.                                                                     
+                                                                                                                      
+  Configured remotes: github.com.                                                                                     
+
+[exit 1]
+# (setup note: the create above ran from the gate worktree, whose only remote is github.com; glab refused it. Retried from the lab worktree, and the recovery file glab wrote was removed.)
+$ (cd $LAB/wt && glab mr create --draft --source-branch fm/nm-7226-live --target-branch main --title 'fixture: GitLab port gate re-validation (throwaway)' --yes)
+
+Creating draft merge request for fm/nm-7226-live into main in gh0stwin/firstmate-gitlab-port-fixture
+
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
+[exit 0]
+## the brief's readback command reports the real draft state
+$ (cd $LAB/wt && glab-axi mr view 3 --full | grep -E '^ *(iid|state|draft|sha|source_branch):')
+  iid: 3
+  title: "Draft: fixture: GitLab port gate re-validation (throwaway)"
+  state: opened
+  draft: yes
+  source_branch: fm/nm-7226-live
+  head_sha: 7d1d801262fc56fefa967d1ce931cf30a9f6904b
+[exit 0]
+## S1: arming refuses the real draft merge request (jq and glab on PATH)
+$ sha256sum $LAB/state/nm-7226-live.meta; ls $LAB/state
+c4942509911fea9ea5541edca0a60a5218899d326fba592bb06def1e38c712b3  $LAB/state/nm-7226-live.meta
+.fm-lab-tmux-dir
+.last-watcher-beat
+nm-7226-live.meta
+[exit 0]
+$ fm-pr-check.sh nm-7226-live https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
+error: https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+[exit 1]
+$ sha256sum $LAB/state/nm-7226-live.meta; ls $LAB/state
+c4942509911fea9ea5541edca0a60a5218899d326fba592bb06def1e38c712b3  $LAB/state/nm-7226-live.meta
+.fm-lab-tmux-dir
+.last-watcher-beat
+nm-7226-live.meta
+[exit 0]
+$ cmp $LAB/state/nm-7226-live.meta <copy taken before the refusal> && echo meta byte-identical
+meta byte-identical
+[exit 0]
+$ test -e $LAB/state/nm-7226-live.check.sh || echo 'no poll armed'
+no poll armed
+[exit 0]

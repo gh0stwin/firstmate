@@ -1,0 +1,7 @@
+# firstmate ca86a7ab - adversarial: forge unreachable. Observed: the unchanged base-branch fetch exits 128 before the recorded-pr_head fallback can apply (pre-existing, same on GitHub)
+$ git -C <worktree> remote set-url origin https://gitlab.invalid/unreachable.git
+$ FM_HOME=<lab> bin/fm-review-diff.sh nm-gl-e2e --stat
+fatal: unable to access 'https://gitlab.invalid/unreachable.git/': Could not resolve host: gitlab.invalid
+exit=128
+$ git -C <worktree> remote set-url origin https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git   # restored
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git

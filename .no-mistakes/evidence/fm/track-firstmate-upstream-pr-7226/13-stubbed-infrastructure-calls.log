@@ -1,0 +1,7 @@
+# no-mistakes calls the teardowns made (lab stub; the shared daemon was never contacted)
+no-mistakes axi status
+no-mistakes axi status
+
+# treehouse calls (lab stub; the shared pool was never touched)
+treehouse return --force $LAB/wt
+treehouse return --force $LAB/wt-held

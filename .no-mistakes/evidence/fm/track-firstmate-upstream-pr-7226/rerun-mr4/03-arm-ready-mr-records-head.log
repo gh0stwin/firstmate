@@ -1,0 +1,17 @@
+# firstmate ca86a7ab - the same real MR marked ready; arming with jq on PATH records the forge head and arms
+$ glab mr update 4 --ready -R gh0stwin/firstmate-gitlab-port-fixture
+✓ marked as ready
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+$ glab mr view 4 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -c {state,draft,sha}
+{"state":"opened","draft":false,"sha":"58d01a1e705fa74d3a23a85ac76a32f76cf30b0e"}
+$ git -C <worktree> for-each-ref refs/remotes   # the branch is on no remote-tracking ref, so only the forge head can satisfy the ship-done gate
+cc1071773852064cc7bc99212dc95fe3d272d35c commit	refs/remotes/origin/HEAD
+cc1071773852064cc7bc99212dc95fe3d272d35c commit	refs/remotes/origin/main
+$ FM_HOME=<lab> bin/fm-pr-check.sh nm-gl-e2e https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+armed: state/nm-gl-e2e.check.sh
+exit=0
+$ grep -E "^(pr|pr_head)=" state/nm-gl-e2e.meta
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+pr_head=58d01a1e705fa74d3a23a85ac76a32f76cf30b0e
+$ git -C <worktree> rev-parse HEAD
+58d01a1e705fa74d3a23a85ac76a32f76cf30b0e

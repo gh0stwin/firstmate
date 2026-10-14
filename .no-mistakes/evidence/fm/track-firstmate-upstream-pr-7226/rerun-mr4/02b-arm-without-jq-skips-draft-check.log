@@ -1,0 +1,21 @@
+# firstmate ca86a7ab - jq-less arm once the branch is on a remote-tracking ref: arms the real draft MR with no draft check and no pr_head (the ruled jq-soft degradation)
+$ git -C <worktree> fetch origin +refs/heads/fm/nm-gl-e2e:refs/remotes/origin/fm/nm-gl-e2e
+58d01a1e705fa74d3a23a85ac76a32f76cf30b0e commit	refs/remotes/origin/fm/nm-gl-e2e
+$ glab mr view 4 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -c {state,draft}
+{"state":"opened","draft":true}
+$ FM_HOME=<lab> PATH=<no-jq> bin/fm-pr-check.sh nm-gl-e2e https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+contributions: jq unavailable; coverage is unconfirmed
+armed: state/nm-gl-e2e.check.sh
+exit=0
+$ grep -E "^(pr|pr_head)=" state/nm-gl-e2e.meta
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+$ ls state/
+.fm-lab-tmux-dir
+.last-watcher-beat
+nm-gl-e2e.check.sh
+nm-gl-e2e.meta
+nm-gl-e2e.pr-poll
+nm-gl-e2e.pr-poll-registration
+$ git -C <worktree> update-ref -d refs/remotes/origin/fm/nm-gl-e2e   # restore: the branch is again on no remote-tracking ref
+cc1071773852064cc7bc99212dc95fe3d272d35c commit	refs/remotes/origin/HEAD
+cc1071773852064cc7bc99212dc95fe3d272d35c commit	refs/remotes/origin/main

@@ -1,0 +1,29 @@
+## the brief's own ready command clears the draft, and its readback prints draft: no
+$ (cd $LAB/wt && glab-axi mr update 3 --ready)
+updated:
+  iid: 3
+  title: "fixture: GitLab port gate re-validation (throwaway)"
+  state: opened
+  draft: no
+help[1]:
+  Run `glab-axi mr view 3 --full` to see updated state
+[exit 0]
+$ (cd $LAB/wt && glab-axi mr view 3 --full | grep -E '^ *(state|draft|head_sha):')
+  state: opened
+  draft: no
+  head_sha: 7d1d801262fc56fefa967d1ce931cf30a9f6904b
+[exit 0]
+## S3: with jq, arming the ready merge request records pr= and the forge head as pr_head=
+$ fm-pr-check.sh nm-7226-live https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
+armed: state/nm-7226-live.check.sh
+[exit 0]
+$ grep -E '^(pr|pr_head)=' $LAB/state/nm-7226-live.meta
+pr=https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
+pr_head=7d1d801262fc56fefa967d1ce931cf30a9f6904b
+[exit 0]
+$ glab mr view 3 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -r .sha   # the forge's own head
+7d1d801262fc56fefa967d1ce931cf30a9f6904b
+[exit 0]
+$ git -C $LAB/wt rev-parse HEAD
+7d1d801262fc56fefa967d1ce931cf30a9f6904b
+[exit 0]

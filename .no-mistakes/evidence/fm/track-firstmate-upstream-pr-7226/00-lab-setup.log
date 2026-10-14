@@ -1,0 +1,53 @@
+# Lab setup at target commit ca86a7ab72dcf0874da15fd963b5ff3ec1c7beb3 on 2026-10-14T04:15:45Z
+glab 1.122.0 (89d0008af)
+jq-1.6
+git version 2.39.5
+tmux 3.7c
+GNU bash, version 5.2.15(1)-release (x86_64-pc-linux-gnu)
+0.2.6
+$ git clone https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git $LAB/projects/firstmate-gitlab-port-fixture
+[exit 0]
+$ git -C $LAB/projects/firstmate-gitlab-port-fixture worktree add -b fm/nm-7226-live $LAB/wt origin/main
+[exit 0]
+$ tasks-axi add nm-7226-live 'GitLab port live gate proof' --kind ship --file $LAB/data/backlog.md
+ok: added nm-7226-live (ship) -> Queued
+task:
+  id: nm-7226-live
+  title: GitLab port live gate proof
+  state: queued
+  blocked: no
+  blocked_by: none
+  held: no
+  hold_reason: "-"
+  hold_kind: "-"
+  hold_until: "-"
+  kind: ship
+  repo: "-"
+  priority: "-"
+  created: 2026-10-14
+  closed: "-"
+  deps: none
+  links: none
+  body: ""
+help[2]:
+  - Run `tasks-axi start nm-7226-live --file=$LAB/data/backlog.md` to move it to in flight
+  - Run `tasks-axi block nm-7226-live --by <other> --file=$LAB/data/backlog.md` to record a dependency
+[exit 0]
+$ tasks-axi start nm-7226-live --file $LAB/data/backlog.md
+ok: start nm-7226-live -> In flight
+help[1]:
+  - Run `tasks-axi done nm-7226-live --pr <url> --file=$LAB/data/backlog.md` when it ships
+[exit 0]
+$ tmux list-windows -t fm-lab   # lab-private socket $TMUX_TMPDIR=/tmp/fml.qBm9YW
+fm-lab:fm-nm-7226-live pane_pid=1194097
+fm-lab:keepalive pane_pid=1194099
+[exit 0]
+$ cat $LAB/state/nm-7226-live.meta
+window=fm-lab:fm-nm-7226-live
+endpoint_task_id=nm-7226-live
+worktree=$LAB/wt
+project=$LAB/projects/firstmate-gitlab-port-fixture
+kind=ship
+mode=no-mistakes
+spawn_gen=gate-lab-nm-7226-live
+[exit 0]

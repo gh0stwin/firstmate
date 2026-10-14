@@ -1,0 +1,94 @@
+## state before: the copy's HEAD is on no remote-tracking ref, lags the merged MR head, and main has moved on
+$ git -C $LAB/wt log --oneline HEAD --not --remotes
+7d1d801 fixture: gate live validation first commit (throwaway)
+[exit 0]
+$ git ls-remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git refs/merge-requests/3/head
+9b1b8190199d06e278e18402f6bb50583c69ba9c	refs/merge-requests/3/head
+[exit 0]
+## S6 control: the same teardown with glab absent cannot read the merged state, falls back to the content check, and refuses
+$ PATH=<PATH without glab> command -v glab
+/usr/bin/glab
+[exit 0]
+# (driver note: the check above ran in the driver's own shell, not under the lab PATH the teardown below used; the corrected check is appended at the end of this log)
+$ PATH=<PATH without glab> fm-teardown.sh nm-7226-live
+fm-gate-refuse: gate agent lifecycle permitted only against lab home $LAB
+REFUSED: worktree $LAB/wt has work not on any remote and not landed.
+unpushed commits:
+7d1d801 fixture: gate live validation first commit (throwaway)
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+[exit 1]
+$ ls $LAB/state | grep nm-7226-live.meta; tmux list-windows -t fm-lab
+nm-7226-live.meta
+fm-lab:fm-nm-7226-live
+fm-lab:keepalive
+[exit 0]
+## S6: with the real glab, the merged-state read plus the refs/merge-requests/3/head fetch proves the work landed and teardown completes
+$ git -C $LAB/wt rev-parse --verify -q refs/fm-review/mr/3/head || echo 'no local MR head ref before teardown'
+no local MR head ref before teardown
+[exit 0]
+$ git -C $LAB/projects/firstmate-gitlab-port-fixture rev-parse --short main origin/main   # project clone before
+fatal: Needed a single revision
+[exit 128]
+# (driver note: --short accepts one revision; the before value is dccd89d, as teardown's own 'synced dccd89d..cc10717' line below reports)
+$ PATH=$LAB/glabshim:$PATH fm-teardown.sh nm-7226-live
+fm-gate-refuse: gate agent lifecycle permitted only against lab home $LAB
+teardown: reaping leaked worktree process group for nm-7226-live: 1194097
+firstmate-gitlab-port-fixture: synced dccd89d..cc10717
+teardown nm-7226-live complete (window fm-lab:fm-nm-7226-live, worktree $LAB/wt)
+Backlog: nm-7226-live is closed in $LAB/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+[exit 0]
+$ cat $LAB/glab-calls.log
+glab mr view 3 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json -> exit 0
+{"iid":3,"state":"merged","sha":"9b1b8190199d06e278e18402f6bb50583c69ba9c"}
+[exit 0]
+$ git -C $LAB/projects/firstmate-gitlab-port-fixture rev-parse --short main   # project clone after
+cc10717
+[exit 0]
+$ git -C $LAB/projects/firstmate-gitlab-port-fixture rev-parse refs/fm-review/mr/3/head   # the head the proof fetched
+9b1b8190199d06e278e18402f6bb50583c69ba9c
+[exit 0]
+$ tmux list-windows -t fm-lab   # task window closed
+fm-lab:keepalive
+[exit 0]
+$ ls -A $LAB/state
+.fm-lab-tmux-dir
+.last-watcher-beat
+contributions.check-trust
+contributions.check.sh
+home-summary.json
+terminal-outcomes
+[exit 0]
+$ cat $LAB/treehouse-calls.log
+treehouse return --force $LAB/wt
+[exit 0]
+$ tasks-axi show nm-7226-live --file $LAB/data/backlog.md --full
+task:
+  id: nm-7226-live
+  title: GitLab port live gate proof
+  state: done
+  blocked: no
+  blocked_by: none
+  held: no
+  hold_reason: "-"
+  hold_kind: "-"
+  hold_until: "-"
+  kind: ship
+  repo: "-"
+  priority: "-"
+  created: "-"
+  closed: 2026-10-14
+  deps: none
+  links: none
+  body: "GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3"
+[exit 0]
+## corrected control check: the exact PATH the glab-absent teardown ran with
+$ PATH=<PATH without glab> sh -c 'command -v glab || echo glab: not found; command -v git jq tmux'
+glab: not found
+git
+[exit 0]
+$ PATH=<PATH without glab> sh -c 'for c in glab git jq tmux; do command -v $c || echo "$c: not found"; done'
+glab: not found
+git: present
+jq: present
+tmux: present
+[exit 0]

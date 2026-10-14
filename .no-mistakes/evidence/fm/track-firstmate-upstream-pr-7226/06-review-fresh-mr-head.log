@@ -1,0 +1,48 @@
+## S4 setup: a fix-round push to the MR source branch from a separate clone (as the no-mistakes pipeline pushes from its own repository); the task copy and the recorded pr_head stay at 7d1d801
+$ git -C $LAB/fixround-clone push -o ci.skip origin fm/nm-7226-live
+remote: 
+remote: View merge request for fm/nm-7226-live:        
+remote:   https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3        
+remote: 
+To https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+   7d1d801..9b1b819  fm/nm-7226-live -> fm/nm-7226-live
+[exit 0]
+$ glab mr view 3 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -r .sha   # forge head after the fix round
+9b1b8190199d06e278e18402f6bb50583c69ba9c
+[exit 0]
+$ git -C $LAB/wt rev-parse HEAD; grep '^pr_head=' $LAB/state/nm-7226-live.meta   # local copy and record are both stale
+7d1d801262fc56fefa967d1ce931cf30a9f6904b
+pr_head=7d1d801262fc56fefa967d1ce931cf30a9f6904b
+[exit 0]
+$ git -C $LAB/wt diff --stat origin/main...HEAD   # what the local branch alone would show
+ NOTES.md | 1 +
+ 1 file changed, 1 insertion(+)
+[exit 0]
+## S4: fm-review-diff.sh compares against a fresh fetch of refs/merge-requests/3/head
+$ fm-review-diff.sh nm-7226-live
+diff base: origin/main
+ FIXROUND.md | 1 +
+ NOTES.md    | 2 ++
+ 2 files changed, 3 insertions(+)
+
+diff --git a/FIXROUND.md b/FIXROUND.md
+new file mode 100644
+index 0000000..b0393b8
+--- /dev/null
++++ b/FIXROUND.md
+@@ -0,0 +1 @@
++fix-round file added only on the forge (throwaway)
+diff --git a/NOTES.md b/NOTES.md
+index 0f3a6d8..aa4ba77 100644
+--- a/NOTES.md
++++ b/NOTES.md
+@@ -1,3 +1,5 @@
+ fixture notes baseline
+ live-evidence change
+ second commit advancing the MR head for the fresh-fetch proof
++gate live validation 01M4W96VYH6N7W5D43QCJNMY5G: first commit (throwaway)
++gate live validation 01M4W96VYH6N7W5D43QCJNMY5G: fix-round commit (throwaway)
+[exit 0]
+$ git -C $LAB/wt rev-parse refs/fm-review/mr/3/head   # the private ref the fetch wrote
+9b1b8190199d06e278e18402f6bb50583c69ba9c
+[exit 0]

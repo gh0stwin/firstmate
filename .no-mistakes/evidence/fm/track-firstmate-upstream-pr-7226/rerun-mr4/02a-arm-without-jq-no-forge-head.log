@@ -1,0 +1,13 @@
+# firstmate ca86a7ab - same real draft MR, armed on a PATH with no jq (ruling: the arm is jq-soft: no draft check, no pr_head)
+$ glab mr view 4 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -c {state,draft}
+{"state":"opened","draft":true}
+$ command -v jq   # on the lab PATH
+(absent)
+$ FM_HOME=<lab> PATH=<no-jq> bin/fm-pr-check.sh nm-gl-e2e https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+error: named head 58d01a1e705fa74d3a23a85ac76a32f76cf30b0e is unreachable outside the worker copy
+exit=1
+$ grep -E "^(pr|pr_head)=" state/nm-gl-e2e.meta
+$ ls state/
+.fm-lab-tmux-dir
+.last-watcher-beat
+nm-gl-e2e.meta

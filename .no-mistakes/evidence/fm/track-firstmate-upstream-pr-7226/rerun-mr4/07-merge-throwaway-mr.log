@@ -1,0 +1,17 @@
+# throwaway fixture MR !4 merged for real (squash, source branch removed) so the teardown landed-work proof has a merged merge request to read
+$ glab api projects/:id/pipelines?ref=fm/nm-gl-e2e | jq -c ".[] | {status,ref}"   # pushes used -o ci.skip, so every source-branch pipeline is skipped
+{"status":"skipped","ref":"refs/merge-requests/4/head"}
+{"status":"skipped","ref":"fm/nm-gl-e2e"}
+{"status":"skipped","ref":"refs/merge-requests/4/head"}
+{"status":"skipped","ref":"fm/nm-gl-e2e"}
+$ glab mr merge 4 -R gh0stwin/firstmate-gitlab-port-fixture --squash --remove-source-branch --sha cd73c80b37d2bece1927c7dee5f4b512a21a663a --squash-message "fixture: gate e2e squash of MR !4 (throwaway) [skip ci]" --yes
+! No pipeline running on fm/nm-gl-e2e
+✓ Merged!
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/4
+exit=0
+$ glab mr view 4 -F json | jq -c {state,sha,squash,merge_commit_sha,squash_commit_sha}
+{"state":"merged","sha":"cd73c80b37d2bece1927c7dee5f4b512a21a663a","squash":true,"merge_commit_sha":"dfcb93868d0f7e593bcaf155a1951762b3d6f822","squash_commit_sha":"abba7de20493ab7d3f29e8ccf15a3201a9511974"}
+$ glab api .../repository/branches | jq -r .[].name   # source branch removed
+main
+$ git ls-remote origin refs/merge-requests/4/head   # GitLab keeps the MR head ref after the merge
+cd73c80b37d2bece1927c7dee5f4b512a21a663a	refs/merge-requests/4/head

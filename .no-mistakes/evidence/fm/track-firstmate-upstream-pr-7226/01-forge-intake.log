@@ -1,0 +1,42 @@
+## fm-forge-detect.sh proposes forge=gitlab from a real gitlab.com clone
+$ git -C $LAB/projects/firstmate-gitlab-port-fixture remote get-url origin
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git
+[exit 0]
+$ fm-forge-detect.sh $LAB/projects/firstmate-gitlab-port-fixture
+forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture.git is on gitlab.com
+[exit 0]
+## adversarial: look-alike and self-hosted hosts are not proposed as gitlab
+$ fm-forge-detect.sh <clone with origin https://gitlab.com.evil.example/x/y.git>
+forge=none
+[exit 0]
+$ fm-forge-detect.sh <clone with origin https://gitlab.example/group/proj.git>
+forge=none
+[exit 0]
+$ fm-forge-detect.sh <clone with origin https://notgitlab.com/x/y.git>
+forge=none
+[exit 0]
+$ fm-forge-detect.sh <clone with origin git@gitlab.company.internal:x/y.git>
+forge=none
+[exit 0]
+$ fm-forge-detect.sh <clone with origin ssh://git@gitlab.com:2222/x/y.git>
+forge=none
+[exit 0]
+$ fm-forge-detect.sh <clone with origin git@gitlab.com:gh0stwin/firstmate-gitlab-port-fixture.git>
+forge=gitlab evidence=origin remote git@gitlab.com:gh0stwin/firstmate-gitlab-port-fixture.git is on gitlab.com
+[exit 0]
+## the captain-confirmed registry binding resolves through fm-project-mode.sh
+$ cat $LAB/data/projects.md
+# Projects
+
+- firstmate-gitlab-port-fixture [direct-PR +yolo forge=gitlab] - throwaway GitLab port fixture (added 2026-10-14)
+- typo-fixture [direct-PR forge=gitlb] - malformed binding (added 2026-10-14)
+[exit 0]
+$ fm-project-mode.sh firstmate-gitlab-port-fixture
+direct-PR on
+[exit 0]
+$ fm-project-mode.sh --forge firstmate-gitlab-port-fixture
+gitlab
+[exit 0]
+$ fm-project-mode.sh --forge typo-fixture
+refused: unknown forge "gitlb" registered for typo-fixture in $LAB/data/projects.md; the accepted values are forge=gerrit, forge=gitlab, and forge=forgejo, or no forge token at all for a forge whose pull requests no-mistakes already drives; correct the registry entry
+[exit 3]

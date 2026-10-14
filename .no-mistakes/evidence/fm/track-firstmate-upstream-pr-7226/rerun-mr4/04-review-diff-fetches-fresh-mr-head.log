@@ -1,0 +1,49 @@
+# firstmate ca86a7ab - a fix-round push lands on the MR from another clone; the worker copy and the recorded pr_head both stay at the old head
+$ git clone <fixture> <lab>/fixround && commit FIXROUND-E2E.md + a second E2E.md line && git push -o ci.skip origin HEAD:fm/nm-gl-e2e
+$ glab mr view 4 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -r .sha   # live MR head
+58d01a1e705fa74d3a23a85ac76a32f76cf30b0e
+$ grep ^pr_head= state/nm-gl-e2e.meta   # recorded at arm, now stale
+pr_head=58d01a1e705fa74d3a23a85ac76a32f76cf30b0e
+$ git -C <worktree> rev-parse HEAD   # local branch, also stale
+58d01a1e705fa74d3a23a85ac76a32f76cf30b0e
+$ git -C <worktree> cat-file -e <live head>   # the worker copy has never seen the fix-round commit
+absent (as expected)
+
+$ FM_HOME=<lab> bin/fm-review-diff.sh nm-gl-e2e --stat
+diff base: origin/main
+ E2E.md          | 2 ++
+ FIXROUND-E2E.md | 1 +
+ 2 files changed, 3 insertions(+)
+exit=0
+
+$ FM_HOME=<lab> bin/fm-review-diff.sh nm-gl-e2e
+diff base: origin/main
+ E2E.md          | 2 ++
+ FIXROUND-E2E.md | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/E2E.md b/E2E.md
+new file mode 100644
+index 0000000..55a977e
+--- /dev/null
++++ b/E2E.md
+@@ -0,0 +1,2 @@
++gate e2e change at firstmate ca86a7a (throwaway)
++fix-round line pushed only to the forge (throwaway)
+diff --git a/FIXROUND-E2E.md b/FIXROUND-E2E.md
+new file mode 100644
+index 0000000..0807615
+--- /dev/null
++++ b/FIXROUND-E2E.md
+@@ -0,0 +1 @@
++fix-round file pushed only to the forge (throwaway)
+exit=0
+
+$ git -C <worktree> rev-parse refs/fm-review/mr/4/head   # the private ref the fresh fetch wrote
+cd73c80b37d2bece1927c7dee5f4b512a21a663a
+
+# note: the MR API sha above was read seconds after the push, before GitLab refreshed the merge request; re-read now:
+$ glab mr view 4 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -r .sha
+cd73c80b37d2bece1927c7dee5f4b512a21a663a
+$ git -C <lab>/fixround rev-parse HEAD   # the fix-round commit that was pushed
+cd73c80b37d2bece1927c7dee5f4b512a21a663a

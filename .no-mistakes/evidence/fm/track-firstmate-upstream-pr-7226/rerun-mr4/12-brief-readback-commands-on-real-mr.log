@@ -1,0 +1,11 @@
+# the glab-axi commands the forge=gitlab brief tells a worker to run, executed against the real fixture MR !4
+$ (cd <lab>/projects/firstmate-gitlab-port-fixture && glab-axi mr view 4 --full) | grep -E "^(  )?(iid|state|draft|title):"
+  iid: 4
+  title: "fixture: gate e2e for the GitLab port re-raise (throwaway)"
+  state: merged
+  draft: no
+exit=0
+$ glab-axi mr update --help | grep -- --ready
+  --state <opened|closed|merged|all>, --source-branch/--head <b>, --target-branch/--base <b>, --label, --author <user>, --assignee <user>, --milestone <name>, --draft!, --limit <n> (default 30), --fields <a,b,c>, --json!/--raw! (raw JSON), --jq <expr> (jq filter over raw JSON)
+  --title <text> (required), --source-branch <b> (required), --target-branch <b> (default: project default), --body <text> or --body-file <path>, --assignee <user>, --reviewer <user>, --label <a,b>, --milestone <name>, --draft!, --remove-source-branch!, --squash!
+  --title, --body or --body-file, --label, --milestone <name>, --assignee <user>, --target-branch, --ready! (clear Draft), --draft! (mark Draft), --close!, --reopen!

@@ -1,0 +1,37 @@
+# firstmate ca86a7ab - ship briefs scaffolded for the registered forge=gitlab project in the lab home
+$ bin/fm-brief.sh gl-dpr firstmate-gitlab-port-fixture --mode direct-PR --forge gitlab --base-branch develop
+scaffolded: <lab>/data/gl-dpr/brief.md (ship, mode=direct-PR forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+exit=0
+$ grep -nE "Delivery contract|^3\. |merge request|glab-axi|target-branch|gh-axi" data/gl-dpr/brief.md
+30:3. Use glab-axi for GitLab operations, gh-axi for GitHub operations, and chrome-devtools-axi for browser operations.
+92:Delivery contract: mode=direct-PR forge=gitlab
+96:When it is implemented and committed, push your branch and open a merge request with `glab-axi` that is ready for review, not a draft, against the base branch `develop` (`--target-branch develop`), not the repository default.
+97:Before you report done, read the merge request back from the forge and confirm it is not a draft (`glab-axi mr view <iid> --full` must print `draft: no`, where <iid> is the merge request number from your MR URL); if it is a draft, mark it ready with `glab-axi mr update <iid> --ready`.
+
+$ bin/fm-brief.sh gl-nm firstmate-gitlab-port-fixture --mode no-mistakes --forge gitlab
+scaffolded: <lab>/data/gl-nm/brief.md (ship, mode=no-mistakes forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+exit=0
+$ grep -nE "Delivery contract|^3\. |draft|glab-axi|gh-axi" data/gl-nm/brief.md
+30:3. Use glab-axi for GitLab operations, gh-axi for GitHub operations, and chrome-devtools-axi for browser operations.
+94:Delivery contract: mode=no-mistakes forge=gitlab
+129:After /no-mistakes reports CI green (the CI-ready return point - do not wait for it to keep monitoring in the background until merge), read the PR back from the forge and confirm it is not a draft (`glab-axi mr view <iid> --full` must print `draft: no`, where <iid> is the merge request number from your MR URL); if it is a draft, mark it ready with `glab-axi mr update <iid> --ready`.
+130:A draft cannot be merged, so a done report on one leaves the merge unasked.
+133:If you deliberately keep the PR a draft, append `paused [at=<epoch>]: {why the draft is held}` instead of done.
+
+## refusals
+$ bin/fm-brief.sh gl-r1 firstmate-gitlab-port-fixture --mode local-only --forge gitlab
+error: fm-brief.sh --forge: forge=gitlab cannot ship mode=local-only - that mode publishes nothing, so a forge has no meaning there, and its landing would fast-forward local main with content the review server has never seen; ship no-mistakes or direct-PR, which publish through the forge
+exit=1
+no brief written
+$ bin/fm-brief.sh gl-r2 firstmate-gitlab-port-fixture --mode direct-PR --forge gerrit --base-branch develop
+error: fm-brief.sh --base-branch: a base branch is not supported on forge=gerrit
+exit=1
+no brief written
+$ bin/fm-brief.sh gl-r3 firstmate-gitlab-port-fixture --mode direct-PR --forge gitlabx
+error: fm-brief.sh --forge: unknown forge 'gitlabx' (expected none, gerrit, gitlab, or forgejo)
+exit=1
+no brief written
+$ bin/fm-brief.sh gl-r4 firstmate-gitlab-port-fixture --mode direct-PR --forge gitlab --shape squash
+error: --shape applies only with --forge gerrit, where the worker publishes the change itself
+exit=1
+no brief written

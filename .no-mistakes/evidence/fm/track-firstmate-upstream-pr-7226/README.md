@@ -1,36 +1,28 @@
-# Live validation of the GitLab forge port at `da90713`
+# Live GitLab validation: firstmate PR #7226 at ca86a7ab (test phase, run 01M4W96VYH6N7W5D43QCJNMY5G)
 
-Driven on 2026-10-13 against the public throwaway fixture
-<https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture> with the real `glab` 1.122.0, `glab-axi`, `git`, `jq`,
-`tmux` 3.7c, `treehouse` 3.1.1 and `tasks-axi` on PATH.
+Date: 2026-10-14. Forge: gitlab.com, the captain-approved public throwaway fixture
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture. Merge request created and merged in this run:
+https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3
 
-## How it was run
+Every firstmate command ran from the gate worktree at the target commit against a disposable lab
+home created with `bin/fm-lab-home.sh create`, with no `FM_*_OVERRIDE` set. That home had a private
+tmux socket and used the real `glab` 1.122.0, `glab-axi`, `git` 2.39.5, `jq` 1.6, `tmux` 3.7c,
+and `tasks-axi` 0.2.6. Two shared services were replaced with logging stubs because they are
+shared fleet infrastructure: the treehouse pool and the no-mistakes daemon
+(`13-stubbed-infrastructure-calls.log`). Pushes used `-o ci.skip` and merge commits carried
+`[skip ci]`, because the fixture has no runner; every pipeline GitLab created shows `skipped`. The lab
+and its tmux server were removed when the run finished. `$LAB` in the logs is that removed lab home.
 
-- A marked disposable lab home (`bin/fm-lab-home.sh create`) with a private tmux socket (`tmux -L fm-lab`) and a
-  treehouse pool rooted inside the lab. Every firstmate script ran from this worktree's `bin/`, typed into a shell
-  pane on that lab server with `FM_HOME` set to the lab.
-- The pane ran a plain shell, not a harness CLI: the scenarios are the scripts firstmate runs, so no model was in the
-  loop. Ship tasks were assembled the way a spawn leaves them (task window, `treehouse get` slot, task record) without
-  launching a worker agent; the worker's steps (commit, push, `glab-axi mr create`) were run by hand from its brief.
-- The only stand-in was `no-mistakes`, shadowed by a no-op so lab teardown never queried the real gate daemon.
-  One run of scenario 11 also injected a failing `treehouse` to interrupt a cleanup.
-- Merge request !1 (merged on 2026-10-13 by the earlier evidence pass) served the landed-work proof. Merge request
-  !2 was opened for this run, driven through draft, ready and a head advance, then closed unmerged and its branch
-  deleted (`13-fixture-cleanup.log`). Nothing was merged. The lab was removed afterwards.
-
-## Transcripts
-
-| File | What it shows |
-| --- | --- |
-| `01-intake.log` | `fm-forge-detect.sh` proposes `forge=gitlab` only for a gitlab.com origin; `fm-project-mode.sh` reads the binding back, keeps `+yolo`, refuses a misspelling and `local-only` |
-| `02-brief.log`, `02-brief-*.md` | `fm-brief.sh --forge gitlab` output for direct-PR, no-mistakes and a base branch; forgejo and gerrit still refuse `--base-branch` |
-| `03-worker.log` | the worker pushes `fm/gl-arm` and opens !2 with `glab-axi`, as its brief says |
-| `04-arm.log` | `fm-pr-check.sh` refuses the real draft and leaves the record byte-identical; once ready it records `pr=` and `pr_head=` equal to the forge's head ref |
-| `05-review.log` | after the head advances elsewhere, `fm-review-diff.sh` diffs the freshly fetched `refs/merge-requests/2/head`, not the stale recorded head |
-| `06-review-pull-segment.log` | a merge request URL with a `pull` namespace segment resolves the fresh head; the same case through commit `e4b2e73` reproduces the stale read |
-| `07-arm-nojq.log` | with no `jq` on PATH the watch arms with no draft check and no `pr_head=`; with `jq` back the same draft refuses |
-| `08-github-regression.log` | a real GitHub draft still refuses and a ready pull request still arms with `gh`'s head |
-| `09-teardown-setup.log`, `10-teardown.log` | teardown refuses an open merge request and a post-merge local commit, and completes for the merged one; each run's decision path is shown |
-| `11-captain-hold.log` | a captain-held landed GitLab task keeps its row open with the merge request as deliverable; the answer closes it, also after an interrupted cleanup |
-| `14-spawn-binding.log` | `fm-spawn.sh` refuses a brief whose forge disagrees with the registry, in both directions |
-| `12-lsof-less-replay-hazard.log` | not part of this change: on this host (no `lsof`) a replayed teardown signalled another pane's process group |
+| # | Scenario | Result | Log |
+|---|----------|--------|-----|
+| 1 | Intake proposes `forge=gitlab` from a real gitlab.com clone; look-alike or self-hosted hosts give `none`; the registry binding resolves; a typo is refused | pass | 01-forge-intake.log |
+| 2 | A `--forge gitlab` ship brief uses glab-axi for the tool rule, the publish step, and the draft readback, and `--target-branch` for the base branch; local-only, a gerrit base branch, and an unknown forge are refused | pass | 02-brief-gitlab.log |
+| 3 | Arming a real draft MR refuses (exit 1); the meta stays byte-identical and no poll is armed | pass | 03-draft-mr-arm-refusal.log |
+| 4 | With no jq on PATH, the arm skips the draft check and records no `pr_head=` (ruling: arming must not depend on jq) | pass | 04-jqless-arm.log |
+| 5 | The brief's own `glab-axi mr update --ready` and `mr view --full` commands work on the real MR; a re-arm records `pr_head=` equal to the forge head | pass | 05-ready-arm-records-head.log |
+| 6 | After a fix-round push from another clone, the review diff reads a fresh `refs/merge-requests/3/head`, not the stale record or the local branch | pass | 06-review-fresh-mr-head.log |
+| 7 | Teardown refuses while the MR is open, even though the MR head ref contains HEAD (the glab recorder shows `state: opened`) | pass | 07-teardown-open-mr-refuses.log |
+| 8 | Real squash merge with source-branch deletion; main then moves on, so a content-only check is inconclusive | setup | 08-merge-and-main-moves-on.log |
+| 9 | MR merged, but a later local commit is not in its head: teardown refuses and keeps everything | pass | 09-teardown-merged-later-commit-refuses.log |
+| 10 | Control: with no glab, the same teardown refuses. With real glab, the merged-state read plus the `refs/merge-requests/3/head` fetch prove the work landed; teardown completes and the backlog row closes with a `GitLab merge request <url>` note | pass | 10-teardown-merged-mr-landed-proof.log |
+| 11 | A captain-held GitLab task: teardown keeps the call open with `Deliverable of the finished work: GitLab merge request <url>`, and the answer closes it | pass | 11-captain-held-gitlab-retain.log |

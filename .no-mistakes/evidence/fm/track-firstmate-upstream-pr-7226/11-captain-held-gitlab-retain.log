@@ -1,0 +1,64 @@
+## S8 setup: a second task whose landed work is the merged MR !3, held for the captain before cleanup
+$ tasks-axi add nm-7226-held 'Held GitLab change' --kind ship --file $LAB/data/backlog.md && tasks-axi start nm-7226-held --file $LAB/data/backlog.md
+ok: start nm-7226-held -> In flight
+help[1]:
+  - Run `tasks-axi done nm-7226-held --pr <url> --file=$LAB/data/backlog.md` when it ships
+[exit 0]
+$ fm-captain-hold.sh hold nm-7226-held --reason 'captain must choose the follow-up'
+nm-7226-held
+[exit 0]
+$ git -C $LAB/wt-held log --oneline HEAD --not --remotes
+7d1d801 fixture: gate live validation first commit (throwaway)
+[exit 0]
+## S8: teardown proves the work landed through the live GitLab read and keeps the captain call open, recording the MR URL as the deliverable
+$ PATH=$LAB/glabshim:$PATH fm-teardown.sh nm-7226-held
+fm-gate-refuse: gate agent lifecycle permitted only against lab home $LAB
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: 306s ago, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  watcher supervision needs Stop-owned automatic recovery; inspect the hook registration and startup status before ending the turn.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+teardown: reaping leaked worktree process group for nm-7226-held: 1217821
+WARNING: watcher still down (same stale episode; last beat: 310s ago, grace 300s) - full banner already printed this episode.
+firstmate-gitlab-port-fixture: already current
+teardown nm-7226-held complete (window fm-lab:fm-nm-7226-held, worktree $LAB/wt-held)
+Backlog: nm-7226-held stays open in $LAB/data/backlog.md, still held for the captain with its deliverable recorded. Relay the question and close it only with bin/fm-captain-hold.sh answer.
+[exit 0]
+$ cat $LAB/glab-calls.log
+glab mr view 3 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json -> exit 0
+{"iid":3,"state":"merged","sha":"9b1b8190199d06e278e18402f6bb50583c69ba9c"}
+[exit 0]
+$ tasks-axi show nm-7226-held --file $LAB/data/backlog.md --full
+task:
+  id: nm-7226-held
+  title: Held GitLab change
+  state: queued
+  blocked: no
+  blocked_by: none
+  held: yes
+  hold_reason: "fm-hold-v1:Y2FwdGFpbiBtdXN0IGNob29zZSB0aGUgZm9sbG93LXVw"
+  hold_kind: captain
+  hold_until: "-"
+  kind: ship
+  repo: "-"
+  priority: "-"
+  created: 2026-10-14
+  closed: "-"
+  deps: none
+  links: none
+  body: "Captain hold set: 2026-10-14T04:20:50Z\n\nDeliverable of the finished work: GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3"
+[exit 0]
+$ ls -A $LAB/state | grep nm-7226-held || echo 'no task state left'
+no task state left
+[exit 0]
+## the captain answers; the retained call closes
+$ fm-captain-hold.sh answer nm-7226-held --decision-file $LAB/answer.txt
+answered: nm-7226-held
+[exit 0]
+$ tasks-axi show nm-7226-held --file $LAB/data/backlog.md --full | grep -E 'state:|body:'
+  state: done
+  hold_kind: captain
+  body: "Resolution recorded by fm-captain-hold.\nDecision digest: 12cda84be0ab441e46e2f8244114418abe6c4fa480b4ba798f8ab598673ac0fa\nResolution mode: answered\n\nCaptain decision:\nProceed with the landed change.\n\nDeliverable of the finished work: GitLab merge request https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture/-/merge_requests/3"
+[exit 0]

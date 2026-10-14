@@ -1,0 +1,59 @@
+## S5 setup: drop the copy's remote-tracking ref for the task branch, so its commit is held only by the forge's MR head ref (the precondition the GitLab proof guards: no remote-tracking ref proves the work landed)
+$ git -C $LAB/projects/firstmate-gitlab-port-fixture update-ref -d refs/remotes/origin/fm/nm-7226-live
+[exit 0]
+$ git -C $LAB/wt log --oneline HEAD --not --remotes   # commits on no remote-tracking ref
+7d1d801 fixture: gate live validation first commit (throwaway)
+[exit 0]
+$ git -C $LAB/wt merge-base --is-ancestor HEAD refs/fm-review/mr/3/head && echo 'HEAD is contained in the MR head ref'
+HEAD is contained in the MR head ref
+[exit 0]
+$ glab mr view 3 -R gh0stwin/firstmate-gitlab-port-fixture -F json | jq -r .state
+opened
+[exit 0]
+## S5 (adversarial): teardown refuses while the merge request is open, though its head ref holds the work
+$ fm-teardown.sh nm-7226-live
+fm-gate-refuse: gate agent lifecycle permitted only against lab home $LAB
+REFUSED: worktree $LAB/wt has work not on any remote and not landed.
+unpushed commits:
+7d1d801 fixture: gate live validation first commit (throwaway)
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+[exit 1]
+## state retained after the refusal
+$ test -d $LAB/wt && git -C $LAB/wt rev-parse --abbrev-ref HEAD && git -C $LAB/wt rev-parse HEAD
+fm/nm-7226-live
+7d1d801262fc56fefa967d1ce931cf30a9f6904b
+[exit 0]
+$ ls -A $LAB/state | grep '^nm-7226-live'
+nm-7226-live.check.sh
+nm-7226-live.meta
+nm-7226-live.pr-poll
+nm-7226-live.pr-poll-registration
+[exit 0]
+$ tmux list-windows -t fm-lab
+fm-lab:fm-nm-7226-live
+fm-lab:keepalive
+[exit 0]
+$ tasks-axi show nm-7226-live --file $LAB/data/backlog.md | grep state:
+  state: in_flight
+[exit 0]
+$ cat $LAB/treehouse-calls.log   # no worktree return attempted
+(no treehouse calls)
+[exit 0]
+## S5 replay with a pass-through glab recorder in front of /usr/bin/glab, to show which forge read decided the refusal
+$ PATH=$LAB/glabshim:$PATH fm-teardown.sh nm-7226-live
+fm-gate-refuse: gate agent lifecycle permitted only against lab home $LAB
+REFUSED: worktree $LAB/wt has work not on any remote and not landed.
+unpushed commits:
+7d1d801 fixture: gate live validation first commit (throwaway)
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+[exit 1]
+$ cat $LAB/glab-calls.log
+glab mr view 3 -R https://gitlab.com/gh0stwin/firstmate-gitlab-port-fixture -F json -> exit 0
+{"iid":3,"state":"opened","sha":"9b1b8190199d06e278e18402f6bb50583c69ba9c"}
+[exit 0]
+$ git -C $LAB/wt rev-parse HEAD; tmux list-windows -t fm-lab; ls $LAB/state/nm-7226-live.meta
+7d1d801262fc56fefa967d1ce931cf30a9f6904b
+fm-lab:fm-nm-7226-live
+fm-lab:keepalive
+$LAB/state/nm-7226-live.meta
+[exit 0]
