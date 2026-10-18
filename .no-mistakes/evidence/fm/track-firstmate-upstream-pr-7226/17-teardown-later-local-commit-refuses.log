@@ -1,0 +1,23 @@
+$ bin/fm-pr-check.sh glp3 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1   (MR 1 merged; arms the watch and records its head)
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+armed: state/glp3.check.sh
+exit=0
+pr=https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1
+pr_head=efea86018e760b2372d237d9fdf83a01d94b0325
+$ now commit later.txt locally, past the merged MR head, pushed nowhere:
+96faf1e local follow-up not in the merge request
+efea860 feat: add feature two
+
+$ bin/fm-teardown.sh glp3
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.KRm9iK
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+REFUSED: worktree /tmp/fm-glport.YdKLyd/wt5 has work not on any remote and not landed.
+unpushed commits:
+96faf1e local follow-up not in the merge request
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+exit=1
+
+$ refusal must retain worktree, branch at the unlanded commit, and record:
+wt5 kept: yes
+branch: fm/glp3b @ 96faf1e
+record kept: yes

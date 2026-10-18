@@ -1,0 +1,4 @@
+$ git ls-remote origin refs/merge-requests/1/head   (fresh MR head after push)
+efea86018e760b2372d237d9fdf83a01d94b0325	refs/merge-requests/1/head
+$ recorded (now stale) pr_head in state/glp1.meta:
+pr_head=e167f7c423cddfc29457ad9203d45f1ed20225a7

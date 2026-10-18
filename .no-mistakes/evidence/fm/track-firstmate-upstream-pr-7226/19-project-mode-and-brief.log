@@ -1,0 +1,27 @@
+$ bin/fm-project-mode.sh glport            (default two-word output)
+no-mistakes off
+$ bin/fm-project-mode.sh glport --forge    (registered forge)
+no-mistakes off
+
+$ bin/fm-brief.sh bg1 glport --mode direct-PR --forge gitlab   (forge bound from the registry)
+scaffolded: /tmp/fm-lab.KRm9iK/data/bg1/brief.md (ship, mode=direct-PR forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+exit=0
+--- brief: delivery contract + forge tool rule + draft readback:
+3. Use glab-axi for GitLab operations, gh-axi for GitHub operations, and chrome-devtools-axi for browser operations.
+Delivery contract: mode=direct-PR forge=gitlab
+When it is implemented and committed, push your branch and open a merge request with `glab-axi` that is ready for review, not a draft.
+Before you report done, read the merge request back from the forge and confirm it is not a draft (`glab-axi mr view <iid> --full` must print `draft: no`, where <iid> is the merge request number from your MR URL); if it is a draft, mark it ready with `glab-axi mr update <iid> --ready`.
+A draft cannot be merged, so a done report on one leaves the merge unasked.
+If you deliberately keep the PR a draft, append `paused [at=<epoch>]: {why the draft is held}` instead of done.
+
+$ bin/fm-brief.sh bg2 glport --mode no-mistakes --forge gitlab --base-branch stable   (base branch is ordinary on gitlab)
+scaffolded: /tmp/fm-lab.KRm9iK/data/bg2/brief.md (ship, mode=no-mistakes forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+exit=0
+You are in a disposable git worktree of glport, at a detached HEAD on a clean copy of its base branch.
+1. Never push to the base branch `stable` or the default branch. Never merge a PR.
+3. Use glab-axi for GitLab operations, gh-axi for GitHub operations, and chrome-devtools-axi for browser operations.
+Delivery contract: mode=no-mistakes forge=gitlab
+
+$ control: --base-branch on forge=gerrit must still refuse:
+error: fm-brief.sh --base-branch: a base branch is not supported on forge=gerrit
+exit=1

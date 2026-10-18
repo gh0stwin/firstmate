@@ -1,0 +1,24 @@
+$ bin/fm-pr-check.sh glp1 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1   # MR now ready for review
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  3 task(s) in flight, but no live watcher process holds this home lock (last beat: 22s ago).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.pi/extensions/fm-primary-turnend-guard.ts -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+armed: state/glp1.check.sh
+exit=0
+
+$ grep -E "^(pr|pr_head)=" state/glp1.meta
+pr=https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1
+pr_head=e167f7c423cddfc29457ad9203d45f1ed20225a7
+
+$ live MR sha from the forge for comparison:
+e167f7c423cddfc29457ad9203d45f1ed20225a7
+
+$ the armed watcher body, run the way the watcher runs it (open MR => silent, no false wake):
+env: '/tmp/fm-lab.KRm9iK/state/glp1.check.sh': Permission denied
+poll-exit=126
+$ bash state/glp1.check.sh   # open MR => silent, no false wake
+poll-exit=0
+(no output above = poll stayed silent on an open merge request)

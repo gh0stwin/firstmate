@@ -1,0 +1,13 @@
+$ bash state/glp5.check.sh (watch wakes on the product-merged MR):
+merged
+$ bin/fm-teardown.sh glp5
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.KRm9iK
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+warning: lsof is unavailable; cannot resolve the tmux pane process group for glp5
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+/tmp/fm-glport.YdKLyd/project: synced 55cf7c8..b0df3fd
+teardown glp5 complete (window firstmate:fm-glp5, worktree /tmp/fm-glport.YdKLyd/wt6)
+Backlog: glp5 just finished (this home keeps no markdown backlog at /tmp/fm-lab.KRm9iK/data/backlog.md). Update /tmp/fm-lab.KRm9iK/data/backlog.md - move glp5 to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+exit=0
+$ records after: 
+no glp5 records remain

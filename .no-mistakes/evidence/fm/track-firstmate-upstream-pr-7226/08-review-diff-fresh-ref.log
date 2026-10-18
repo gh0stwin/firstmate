@@ -1,0 +1,12 @@
+$ bin/fm-review-diff.sh glp1 --stat   # stale pr_head=e167f7c has only feature-one.txt;
+  a fresh refs/merge-requests/1/head fetch must show BOTH files
+WARNING: watcher still down (same stale episode; last beat: 81s ago, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ feature-one.txt | 1 +
+ feature-two.txt | 1 +
+ 2 files changed, 2 insertions(+)
+exit=0
+
+$ control: what the stale recorded head alone would have shown
+ feature-one.txt | 1 +
+ 1 file changed, 1 insertion(+)

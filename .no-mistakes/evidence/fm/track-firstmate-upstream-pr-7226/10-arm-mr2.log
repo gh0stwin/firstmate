@@ -1,0 +1,11 @@
+$ bin/fm-pr-check.sh glp2 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/2   # arm the open MR 2 watch (task record now names MR 2)
+armed: state/glp2.check.sh
+exit=0
+pr=https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/2
+pr_head=526f0da0535ffeaeeef8f4b9a091820e5dd521cc
+$ wt2 HEAD vs MR 2 head ref vs local remote-tracking refs:
+526f0da0535ffeaeeef8f4b9a091820e5dd521cc
+refs/remotes/origin/HEAD
+refs/remotes/origin/fm/glp1
+refs/remotes/origin/fm/glp2
+refs/remotes/origin/main

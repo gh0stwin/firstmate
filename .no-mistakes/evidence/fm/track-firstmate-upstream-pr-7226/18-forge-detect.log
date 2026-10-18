@@ -1,0 +1,10 @@
+gl-https       https://gitlab.com/group/subgroup/project.git           -> forge=gitlab evidence=origin remote https://gitlab.com/group/subgroup/project.git is on gitlab.com
+gl-https-port  https://gitlab.com:443/group/proj.git                   -> forge=gitlab evidence=origin remote https://gitlab.com:443/group/proj.git is on gitlab.com
+gl-scp         git@gitlab.com:group/subgroup/project.git               -> forge=gitlab evidence=origin remote git@gitlab.com:group/subgroup/project.git is on gitlab.com
+gl-ssh         ssh://git@gitlab.com/group/proj.git                     -> forge=gitlab evidence=origin remote ssh://git@gitlab.com/group/proj.git is on gitlab.com
+gl-ssh22       ssh://git@gitlab.com:22/group/proj.git                  -> forge=gitlab evidence=origin remote ssh://git@gitlab.com:22/group/proj.git is on gitlab.com
+gl-user        ssh://gitlab.com/group/proj.git                         -> forge=gitlab evidence=origin remote ssh://gitlab.com/group/proj.git is on gitlab.com
+selfhost       https://gitlab.example.com/group/proj.git               -> forge=none
+gh             https://github.com/octocat/hello.git                    -> forge=none
+gerrit         https://gerrit.example.com/a/proj                       -> forge=gerrit evidence=origin remote ssh://gerrit.example.com:29418/proj uses SSH port 29418
+plain          https://example.com/group/proj.git                      -> forge=none

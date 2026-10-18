@@ -1,0 +1,18 @@
+$ bin/fm-teardown.sh glp1   # merged MR 1; proof = merged state read + refs/merge-requests/1/head containment
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.KRm9iK
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  3 task(s) in flight, but no watcher has a fresh beacon (last beat: 506s ago, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.pi/extensions/fm-primary-turnend-guard.ts -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+warning: lsof is unavailable; cannot resolve the tmux pane process group for glp1
+WARNING: watcher still down (same stale episode; last beat: 509s ago, grace 300s) - full banner already printed this episode.
+/tmp/fm-glport.YdKLyd/project: synced e01c8d5..55cf7c8
+teardown glp1 complete (window firstmate:fm-glp1, worktree /tmp/fm-glport.YdKLyd/wt1)
+Backlog: glp1 just finished (this home keeps no markdown backlog at /tmp/fm-lab.KRm9iK/data/backlog.md). Update /tmp/fm-lab.KRm9iK/data/backlog.md - move glp1 to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+exit=0
+
+$ task record and watch sidecars after a completed teardown:
+no glp1 records remain

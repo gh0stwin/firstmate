@@ -1,0 +1,8 @@
+$ bin/fm-pr-check.sh glp1 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1   # MR is a draft (work_in_progress=true)
+error: https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+exit=1
+
+$ grep -c "^pr=" state/glp1.meta (must be 0: nothing recorded)
+0
+$ ls state/glp1.check.sh (must be absent: nothing armed)
+ls: cannot access '/tmp/fm-lab.KRm9iK/state/glp1.check.sh': No such file or directory

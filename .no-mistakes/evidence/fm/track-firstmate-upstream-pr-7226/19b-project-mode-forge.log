@@ -1,0 +1,4 @@
+$ bin/fm-project-mode.sh --forge glport
+gitlab
+$ bin/fm-project-mode.sh glport   (default two-word output unchanged)
+no-mistakes off

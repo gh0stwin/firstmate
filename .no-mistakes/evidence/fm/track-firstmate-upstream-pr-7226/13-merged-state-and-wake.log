@@ -1,0 +1,12 @@
+$ forge state of MR 1 (merged by captain through the GitLab API after the transient 422):
+{"state":"merged","sha":"efea86018e760b2372d237d9fdf83a01d94b0325","merge_commit_sha":"42149b8e7464ba5346d86b88ded6e07320d25db9"}
+$ refs/merge-requests/1/head on origin:
+efea86018e760b2372d237d9fdf83a01d94b0325	refs/merge-requests/1/head
+$ wt1 HEAD (unpushed per the worktree remote-tracking view):
+efea86018e760b2372d237d9fdf83a01d94b0325
+efea860 feat: add feature two
+e167f7c feat: add feature one
+
+$ bash state/glp1.check.sh   # armed watch against merged MR 1 - must wake:
+merged
+poll-exit=0

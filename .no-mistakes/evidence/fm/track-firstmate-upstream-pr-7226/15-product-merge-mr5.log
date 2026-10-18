@@ -1,0 +1,16 @@
+$ bin/fm-pr-check.sh glp5 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/5
+armed: state/glp5.check.sh
+exit=0
+pr=https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/5
+pr_head=78f5fd455f95fa937ce26089aa31917debf99560
+
+$ bin/fm-pr-merge.sh glp5 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/5 --allow-no-pipeline   (captain waiver; repo runs no pipeline)
+armed: state/glp5.check.sh
+verified: https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/5 is open and mergeable at head 78f5fd455f95fa937ce26089aa31917debf99560, with no head pipeline, waived by --allow-no-pipeline
+! No pipeline running on fm/glp5
+✓ Merged!
+https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/5
+exit=0
+
+$ forge read-back:
+{"state":"merged","sha":"78f5fd455f95fa937ce26089aa31917debf99560","merge_commit_sha":"b0df3fd282251aafc024b0476dc25a3b701a282c"}

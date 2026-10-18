@@ -1,0 +1,13 @@
+$ bin/fm-teardown.sh glp2   # MR 2 is OPEN though its refs/merge-requests/2/head holds the worktree HEAD
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.KRm9iK
+WARNING: watcher still down (same stale episode; last beat: 170s ago, grace 300s) - full banner already printed this episode.
+REFUSED: worktree /tmp/fm-glport.YdKLyd/wt2 has work not on any remote and not landed.
+unpushed commits:
+526f0da feat: add feature three
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+exit=1
+
+$ refusal must retain the worktree, its branch at the unlanded commit, and the task record:
+wt2 kept: yes
+branch: fm/glp2 @ 526f0da
+record kept: yes

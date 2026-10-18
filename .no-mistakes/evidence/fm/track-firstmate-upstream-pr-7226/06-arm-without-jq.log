@@ -1,0 +1,7 @@
+$ PATH="<nojq-only>" bin/fm-pr-check.sh glp2 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1   # jq fully off PATH (verified: command -v jq finds nothing)
+contributions: jq unavailable; coverage is unconfirmed
+armed: state/glp2.check.sh
+exit=0
+
+$ grep -E "^(pr|pr_head)=" state/glp2.meta   # pr recorded; pr_head must be absent without jq
+pr=https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1

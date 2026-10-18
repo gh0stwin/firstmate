@@ -1,0 +1,18 @@
+$ bin/fm-pr-merge.sh glp1 https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1 --allow-no-pipeline   # repo runs no pipeline; captain waiver
+armed: state/glp1.check.sh
+notice: recorded head e167f7c423cddfc29457ad9203d45f1ed20225a7 disagrees with the live head efea86018e760b2372d237d9fdf83a01d94b0325; verifying the live head
+verified: https://gitlab.com/gh0stwin/fm-glport-gate-10182102/-/merge_requests/1 is open and mergeable at head efea86018e760b2372d237d9fdf83a01d94b0325, with no head pipeline, waived by --allow-no-pipeline
+          
+   ERROR  
+          
+  All attempts fail:                                                                                                  
+  #1: PUT https://gitlab.com/api/v4/projects/gh0stwin%2Ffm-glport-gate-10182102/merge_requests/1/merge: 422 {message: 
+  Branch cannot be merged}.                                                                                           
+
+exit=1
+
+$ forge state + merge commit after the product merge:
+{"state":"opened","merged_at":null,"merge_commit_sha":"","sha":"efea86018e760b2372d237d9fdf83a01d94b0325"}
+
+$ the armed watch, run the way the watcher runs it - must now wake with exactly one merged line:
+poll-exit=0
