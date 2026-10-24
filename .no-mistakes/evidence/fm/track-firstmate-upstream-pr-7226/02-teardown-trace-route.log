@@ -1,0 +1,47 @@
+# bash -x trace excerpt: the merged-MR teardown accept went through the GitLab landed-work proof
+# (bin/fm-teardown.sh gl-trace; case identical to 5b; real glab + real gitlab.com fetch)
+
++ local branch=fm/gl-trace
++ pr_is_merged fm/gl-trace
++ local branch=fm/gl-trace target view state remainder head resolved_url current landed=0
++ '[' -n https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1 ']'
++ target=https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1
++ '[' -n https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1 ']'
++ case "$target" in
++ gitlab_mr_is_merged
++ local head current landed=0
++ fm_pr_url_parse https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1
++ local raw=https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1 pattern host path
++ local LC_ALL=C
++ FM_PR_PROVIDER=
+...
++ fm_pr_gitlab_read_record gitlab.com gh0stwin/fm-live-evidence-6484 1
++ local host=gitlab.com path=gh0stwin/fm-live-evidence-6484 number=1 project_url json fields line
++ local total=0 named=0 state= merged=
++ FM_PR_RECORD_STATE=
++ FM_PR_RECORD_MERGED=
++ command -v glab
++ command -v jq
++ project_url=https://gitlab.com/gh0stwin/fm-live-evidence-6484
+++ GITLAB_HOST=gitlab.com
+++ glab mr view 1 -R https://gitlab.com/gh0stwin/fm-live-evidence-6484 -F json
++ json='{"id":554752784,"iid":1,"target_branch":"main","source_branch":"fm/gitlab-live","project_id":88037019,"title":"Live evidence merge request for the GitLab port","state":"merged","imported":false,"imported_from":"none","created_at":"2026-10-24T10:08:29.127Z","updated_at":"2026-10-24T10:16:07.814Z","upvotes":0,"downvotes":0,"author":{"id":2566131,"username":"gh0stwin","name":"Fábio Vital","state":"active","created_at":null,"avatar_url":"https://gitlab.com/uploads/-/system/user/avatar/2566131/avatar.png?v=1792818859","web_url":"https://gitlab.com/gh0stwin"},"assignee":null,"assignees":[],"reviewers":[],"source_project_id":88037019,"target_project_id":88037019,"labels":[],"label_details":null,"description":"Throwaway merge request used to drive firstmate'\''s GitLab arm/draft/refuse/review/teardown paths live. Will be merged and the repo deleted afterwards.","draft":false,"milestone":null,"merge_when_pipeline_succeeds":false,"detailed_merge_status":"not_open","merge_user":{"id":2566131,"username":"gh0stwin","name":"Fábio Vital","state":"active","created_at":null,"avatar_url":"https://gitlab.com/uploads/-/system/user/avatar/2566131/avatar.png?v=1792818859","web_url":"https://gitlab.com/gh0stwin"},"merged_at":"2026-10-24T10:16:07.959Z","merge_after":null,"prepared_at":"2026-10-24T10:08:30.35Z","closed_by":null,"closed_at":null,"sha":"e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0","merge_commit_sha":"7ac4c1268a1acbe233e5b74b942587cd36608faa","squash_commit_sha":"214225aa50040b1efc2ce021e8b3aa7a1549cb37","user_notes_count":0,"should_remove_source_branch":false,"force_remove_source_branch":true,"allow_collaboration":false,"allow_maintainer_to_push":false,"web_url":"https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1","references":{"short":"!1","relative":"!1","full":"gh0stwin/fm-live-evidence-6484!1"},"discussion_locked":false,"time_stats":{"human_time_estimate":"","human_total_time_spent":"","time_estimate":0,"total_time_spent":0},"squash":true,"squash_on_merge":true,"task_completion_status":{"count":0,"completed_count":0},"has_conflicts":false,"blocking_discussions_resolved":true,"merged_by":{"id":2566131,"username":"gh0stwin","name":"Fábio Vital","state":"active","created_at":null,"avatar_url":"https://gitlab.com/uploads/-/system/user/avatar/2566131/avatar.png?v=1792818859","web_url":"https://gitlab.com/gh0stwin"},"merge_error":"","subscribed":true,"changes_count":"1","user":{"can_merge":true},"latest_build_started_at":null,"latest_build_finished_at":null,"first_deployed_to_production_at":null,"pipeline":null,"head_pipeline":null,"diff_refs":{"base_sha":"2b837f58d1b2fa5e771044aa86bf1ec69d1076a9","head_sha":"e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0","start_sha":"2b837f58d1b2fa5e771044aa86bf1ec69d1076a9"},"rebase_in_progress":false,"diverged_commits_count":0,"first_contribution":true,"work_in_progress":false}'
++ '[' -z '{"id":554752784,"iid":1,"target_branch":"main","source_branch":"fm/gitlab-live","project_id":88037019,"title":"Live evidence merge request for the GitLab port","state":"merged","imported":false,"imported_from":"none","created_at":"2026-10-24T10:08:29.127Z","updated_at":"2026-10-24T10:16:07.814Z","upvotes":0,"downvotes":0,"author":{"id":2566131,"username":"gh0stwin","name":"Fábio Vital","state":"active","created_at":null,"avatar_url":"https://gitlab.com/uploads/-/system/user/avatar/2566131/avatar.png?v=1792818859","web_url":"https://gitlab.com/gh0stwin"},"assignee":null,"assignees":[],"reviewers":[],"source_project_id":88037019,"target_project_id":88037019,"labels":[],"label_details":null,"description":"Throwaway merge request used to drive firstmate'\''s GitLab arm/draft/refuse/review/teardown paths live. Will be merged and the repo deleted afterwards.","draft":false,"milestone":null,"merge_when_pipeline_succeeds":false,"detailed_merge_status":"not_open","merge_user":{"id":2566131,"username":"gh0stwin","name":"Fábio Vital","state":"active","created_at":null,"avatar_url":"https://gitlab.com/uploads/-/system/user/avatar/2566131/avatar.png?v=1792818859","web_url":"https://gitlab.com/gh0stwin"},"merged_at":"2026-10-24T10:16:07.959Z","merge_after":null,"prepared_at":"2026-10-24T10:08:30.35Z","closed_by":null,"closed_at":null,"sha":"e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0","merge_commit_sha":"7ac4c1268a1acbe233e5b74b942587cd36608faa","squash_commit_sha":"214225aa50040b1efc2ce021e8b3aa7a1549cb37","user_notes_count":0,"should_remove_source_branch":false,"force_remove_source_branch":true,"allow_collaboration":false,"allow_maintainer_to_push":false,"web_url":"https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1","references":{"short":"!1","relative":"!1","full":"gh0stwin/fm-live-evidence-6484!1"},"discussion_locked":false,"time_stats":{"human_time_estimate":"","human_total_time_spent":"","time_estimate":0,"total_time_spent":0},"squash":true,"squash_on_merge":true,"task_completion_status":{"count":0,"completed_count":0},"has_conflicts":false,"blocking_discussions_resolved":true,"merged_by":{"id":2566131,"username":"gh0stwin","name":"Fábio Vital","state":"active","created_at":null,"avatar_url":"https://gitlab.com/uploads/-/system/user/avatar/2566131/avatar.png?v=1792818859","web_url":"https://gitlab.com/gh0stwin"},"merge_error":"","subscribed":true,"changes_count":"1","user":{"can_merge":true},"latest_build_started_at":null,"latest_build_finished_at":null,"first_deployed_to_production_at":null,"pipeline":null,"head_pipeline":null,"diff_refs":{"base_sha":"2b837f58d1b2fa5e771044aa86bf1ec69d1076a9","head_sha":"e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0","start_sha":"2b837f58d1b2fa5e771044aa86bf1ec69d1076a9"},"rebase_in_progress":false,"diverged_commits_count":0,"first_contribution":true,"work_in_progress":false}' ']'
+...
+++ local iid=1 resolved
+++ git -C /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-trace/wt remote get-url origin
+++ git -C /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-trace/wt fetch --quiet origin +refs/merge-requests/1/head:refs/fm-review/mr/1/head
++++ git -C /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-trace/wt rev-parse --verify 'refs/fm-review/mr/1/head^{commit}'
+++ resolved=e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0
+++ '[' -n e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0 ']'
+++ printf %s e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0
++ head=e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0
+++ git -C /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-trace/wt rev-parse --verify HEAD
++ current=e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0
++ git -C /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-trace/wt merge-base --is-ancestor e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0 e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0
++ landed=1
++ '[' 1 = 1 ']'
++ return 0
+
+# work_is_landed short-circuits on pr_is_merged (":") and never calls content_in_default:
+2599:+ work_is_landed fm/gl-trace

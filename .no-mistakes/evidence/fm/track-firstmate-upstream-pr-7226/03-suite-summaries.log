@@ -1,0 +1,39 @@
+# Targeted unit-suite results at head 824fcbf5 on this host
+# date: 2026-10-24T11:05:28Z
+
+## tests/fm-forge-detect.test.sh  (7 ok, rc=0)
+# all fm-forge-detect tests passed
+## tests/fm-review-diff.test.sh  (12 ok, rc=0)
+ok - fm-review-diff falls back to a recorded Forgejo pr_head when the pull ref cannot be fetched
+## tests/fm-brief.test.sh  (42 ok, rc=0)
+ok - fm-brief.sh: every crewmate scaffold forbids administering the shared worktree pool
+## tests/fm-dod-lib.test.sh  (27 ok, rc=0)
+all fm-dod-lib tests passed
+## tests/fm-project-mode.test.sh  (9 ok, rc=0)
+# fm-project-mode.test.sh: all assertions passed
+## tests/fm-task-delivery.test.sh  (30 ok, rc=0)
+# all fm-task-delivery tests passed
+
+## tests/fm-pr-check-security.test.sh
+passed cases: 48, rc=0
+
+## tests/fm-teardown.test.sh
+passed cases before abort: 135; aborts at the inherited lsof-less host case:
+ok - a task-owned autonomous running step is left alone rather than aborted
+not ok - leaked-process-reap: leaked worktree process survived teardown
+rc=1
+all five GitLab teardown cases passed:
+ok - teardown closes a landed GitLab task with its merge request URL as a note and GitHub and Forgejo tasks with --pr
+ok - a merged GitLab merge request with its head ref lands the worktree
+ok - an open GitLab merge request does not allow teardown though its head ref holds the work
+ok - merged GitLab merge request does not allow teardown after a later local commit
+ok - teardown closes a landed GitLab task with its MR URL as a note
+
+## tests/fm-captain-hold-lifecycle.test.sh
+Full file hangs at case 8 (test_hold_decodes_a_bare_scalar_body_without_the_nonref_default) after 7 passes, on this host.
+Identical hang at base d22640f4 (7 passes then timeout 124) => inherited from upstream main on this host, not from this branch.
+The two GitLab cases this branch adds were driven in isolation and both pass:
+case1 rc=0
+ok - cleanup keeps a captain-held GitLab task open and records its merge request URL
+case2 rc=0
+rc=0

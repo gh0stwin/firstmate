@@ -1,0 +1,73 @@
+# Live GitLab end-to-end validation of the firstmate GitLab port (branch fm/track-firstmate-upstream-pr-7226, head 824fcbf5)
+# Date: 2026-10-24T11:03:10Z  Fixture: https://gitlab.com/gh0stwin/fm-live-evidence-6484 (public throwaway, deleted after the run)
+# Versions: glab 1.123.0 (5686d7484) | jq-1.6 | git version 2.39.5 | bash 5.2.15
+
+## 1. Draft merge request refuses arming (real glab state read)
+$ glab mr update 1 --draft -R gh0stwin/fm-live-evidence-6484  ->  (marked as Draft)
+$ FM_ROOT_OVERRIDE=$PWD FM_HOME=.live-lab/arm-home bin/fm-pr-check.sh gl-live https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1
+exit code: 1
+error: https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+task meta after refusal: byte-identical to before (cmp), and state/gl-live.check.sh absent (no poll armed).
+
+## 2. Ready merge request arms and records the forge-reported head
+$ glab mr update 1 --ready -R gh0stwin/fm-live-evidence-6484
+$ FM_ROOT_OVERRIDE=$PWD FM_HOME=.live-lab/arm-home bin/fm-pr-check.sh gl-live <mr-url>
+armed: state/gl-live.check.sh
+$ grep -E "^(pr|pr_head)=" state/gl-live.meta
+pr=https://gitlab.com/gh0stwin/fm-live-evidence-6484/-/merge_requests/1
+pr_head=20b074af5e5d2e9872bf85170957a1ea3c900662
+branch head pushed to origin: 20b074af5e5d2e9872bf85170957a1ea3c900662  (matches pr_head exactly)
+
+## 3. Armed poll is silent while open, wakes with exactly "merged" after the real squash merge
+$ bash state/gl-live.check.sh   # while MR open
+output: (empty) exit 0
+$ glab mr merge 1 -R gh0stwin/fm-live-evidence-6484 --squash --yes   ->  state=merged, merge_commit_sha=7ac4c1268a1acbe233e5b74b942587cd36608faa (squash rewrote the work; source branch auto-deleted)
+$ bash state/gl-live.check.sh   # after merge
+output: merged
+
+## 4. Review compare takes the freshly fetched refs/merge-requests/1/head over the stale recorded pr_head
+$ (advance branch) second commit pushed; recorded pr_head stays at HEAD1, origin head moves to HEAD2
+$ FM_ROOT_OVERRIDE=$PWD FM_HOME=.live-lab/arm-home bin/fm-review-diff.sh gl-live --stat
+diff base: origin/main
+ NOTES.md | 2 ++
+ 1 file changed, 2 insertions(+)
+refs/fm-review/mr/1/head in the worktree after the run: e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0 (the fresh head)
+recorded stale pr_head: 20b074af5e5d2e9872bf85170957a1ea3c900662 — the fresh ref won; at the stale head NOTES.md would show 1 insertion, not 2.
+
+## 5. Teardown landed-work proof, live, against the merged merge request
+Case setup: project clone + worktree at the branch head e9053ac8; only non-forge surroundings stubbed (tmux, treehouse, gh/gh-axi, no-mistakes run check); glab/git/jq/tasks-axi real. Task record carries pr=<mr-url>, mode=no-mistakes. Worktree HEAD is on NO remote-tracking branch (source branch deleted by the squash merge); only refs/merge-requests/1/head holds it, and main carries the rewritten squash commit.
+
+### 5a. Unmerged merge request (work contained in its head ref) must REFUSE
+teardown rc=1
+REFUSED: worktree /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-open/wt has work not on any remote and not landed.
+unpushed commits:
+e9053ac feat: second change
+20b074a feat: first change
+worktree: RETAINED at e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0
+task record: RETAINED
+backlog: in_flight
+
+### 5b. Merged merge request lands the worktree (GitLab proof route, traced)
+teardown rc=0
+teardown gl-merged complete (window firstmate:fm-gl-merged, worktree /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-merged/wt)
+worktree: RETAINED at e9053ac8d6ec0f98bdfd0c8786eb73ac7bd893c0
+task record: REMOVED
+backlog: done
+The accepting route is the GitLab proof itself (see 02-teardown-trace-route.log): pr_is_merged -> gitlab_mr_is_merged -> real glab state read -> real refs/merge-requests/1/head fetch -> merge-base --is-ancestor -> return 0, never reaching the content-check fallback.
+
+### 5c. Merged merge request with a later local commit not in its head must REFUSE
+teardown rc=1
+REFUSED: worktree /home/node/.no-mistakes/worktrees/ef201284bc89/01M588D9N5ASCT852VRFZT7AYX/.live-lab/case-stale/wt has work not on any remote and not landed.
+unpushed commits:
+6289a60 local follow-up
+e9053ac feat: second change
+20b074a feat: first change
+worktree: RETAINED at 6289a60bfb83deb61ee78e7bc04d2489168a7d23
+task record: RETAINED
+backlog: in_flight
+
+## 6. Forge intake proposal from a clone (bin/fm-forge-detect.sh)
+https origin  -> forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/fm-live-evidence-6484.git is on gitlab.com
+ssh origin    -> forge=gitlab evidence=origin remote ssh://git@gitlab.com:22/gh0stwin/whatever.git is on gitlab.com
+scp-like      -> forge=gitlab evidence=origin remote git@gitlab.com:gh0stwin/whatever.git is on gitlab.com
+self-hosted   -> forge=none (captain confirms, by design)
