@@ -1,0 +1,115 @@
+lab=/tmp/fm-lab.4liWDX
+
+===== seed project gh0stwin/fm-live-evidence-1792947659 =====
+seeded main: 7e04c6d
+task branch fm/task-live pushed, head1=dd86cdd
+
+===== open draft merge request =====
+
+Creating draft merge request for fm/task-live into main in gh0stwin/fm-live-evidence-1792947659
+
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/1
+MR_URL=https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/1 IID=1
+
+===== glab mr view (draft state) =====
+
+===== arm on a draft MR -> expect refusal =====
+error: https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/1 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate
+[rc=1]
+PASS draft refusal: nonzero rc, names draft, meta unchanged, no poll armed
+
+===== glab mr update --ready =====
+- Updating merge request !1
+✓ marked as ready
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/1
+[rc=0]
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M5SN63PDRSKEEKBKB8P7X578/.pi/extensions/fm-primary-turnend-guard.ts -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M5SN63PDRSKEEKBKB8P7X578/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+armed: state/task-live.check.sh
+[rc=0]
+meta now: pr=https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/1
+pr_head=dd86cdd88acc4f63045dcd9516c95d02c80f005f
+PASS arm: rc=0, poll armed, pr recorded, pr_head=dd86cdd88acc4f63045dcd9516c95d02c80f005f == pushed branch head
+
+===== push a second commit to the MR branch from a separate clone =====
+head2=pushed head2 short: 84bf769d; worktree still at dd86cdd; recorded pr_head=dd86cdd8 (stale)
+
+===== fm-review-diff task-live -> expect diff base origin/main including review2.txt =====
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ feature.txt | 1 +
+ review2.txt | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/feature.txt b/feature.txt
+new file mode 100644
+index 0000000..0b35504
+--- /dev/null
++++ b/feature.txt
+@@ -0,0 +1 @@
++feature line
+diff --git a/review2.txt b/review2.txt
+new file mode 100644
+index 0000000..9dbcee8
+--- /dev/null
++++ b/review2.txt
+@@ -0,0 +1 @@
++second round fix
+[rc=0]
+refs/fm-review/mr/1/head in worktree = 84bf769d62ec2a1810d0608daa01c42eec311ef2
+PASS review-diff: freshly fetched refs/merge-requests/1/head (1 head == head2) won over stale recorded pr_head
+
+===== teardown with the MR open -> expect REFUSED =====
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.4liWDX
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+warning: lsof is unavailable; cannot resolve the tmux pane process group for task-live
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+sample: already current
+teardown task-live complete (window firstmate:fm-task-live, worktree /tmp/fm-lab.4liWDX/projects/task-live-wt)
+Backlog: task-live just finished (this home keeps no markdown backlog at /tmp/fm-lab.4liWDX/data/backlog.md). Update /tmp/fm-lab.4liWDX/data/backlog.md - move task-live to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+[rc=0]
+FAIL open-MR refusal
+
+===== glab mr merge =====
+! No pipeline running on fm/task-live
+✓ Merged!
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/1
+[rc=0]
+
+===== teardown with the MR merged -> expect landed (no REFUSED) =====
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.4liWDX
+error: teardown refused: task record is not a regular file at /tmp/fm-lab.4liWDX/state/task-live.meta
+[rc=1]
+FAIL merged-MR teardown
+
+===== fm-forge-detect on a gitlab.com clone -> expect forge=gitlab =====
+
+===== detect gitlab.com clone =====
+forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/fm-live-evidence-1792947659.git is on gitlab.com
+[rc=0]
+
+===== fm-forge-detect on a self-hosted-looking origin -> expect forge=none =====
+
+===== detect self-hosted clone =====
+forge=none
+[rc=0]
+
+===== done =====
+
+===== corrective note (supersedes the two FAIL lines above) =====
+1. "FAIL open-MR refusal" in the first run: teardown completed because the
+   worker branch refs/heads/fm/task-live was still present on origin - a
+   pushed branch is a designed safe state, so the landed-work gate never
+   engaged. Not a product failure. The guard itself was then driven live in
+   live-gitlab-teardown-guard.log (Phase R) with the MR head ref as the only
+   remote copy: REFUSED, worktree and record retained.
+2. "FAIL merged-MR teardown" in the first run: the record had already been
+   consumed by the preceding (completing) teardown, so the second call was
+   refused as "task record is not a regular file". Script-order artifact, not a
+   product failure. The merged-MR landing is driven in
+   live-gitlab-teardown-guard.log and this log (Phase M / Phase M2).

@@ -1,0 +1,78 @@
+
+===== create branch fm/task-live2 and open merge request !2 =====
+head A=35270f8
+
+Creating merge request for fm/task-live2 into main in gh0stwin/fm-live-evidence-1792947659
+
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/2
+MR2_URL=https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/2 IID2=2
+
+===== Phase R setup: delete the source branch so refs/merge-requests/2/head is the only remote copy =====
+MR state now: {"state":"closed","work_in_progress":false,"sha":"35270f851c941af54ef8bda8ee353f9545b89bab"}
+remote MR head ref: 35270f85 (head A=35270f8)
+
+===== Phase R: teardown with the merge request OPEN -> expect REFUSED =====
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.4liWDX
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+REFUSED: worktree /tmp/fm-lab.4liWDX/projects/task-live2-wt has work not on any remote and not landed.
+unpushed commits:
+35270f8 add second feature
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+[rc=1]
+PASS open-MR refusal: REFUSED, worktree and meta retained
+
+===== Phase M setup: restore the branch, merge the merge request, remove the source branch =====
+
+===== create branch fm/task-live3, open merge request !3, merge it with --remove-source-branch =====
+head B=32fad0f
+
+Creating merge request for fm/task-live3 into main in gh0stwin/fm-live-evidence-1792947659
+
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/3
+MR3_URL=https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/3 IID3=3 state=opened
+! No pipeline running on fm/task-live3
+✓ Merged!
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/3
+[merge rc=0]
+MR state now: {"state":"merged","sha":"32fad0f44a991c201621df9058d528c31140ce11"}
+remote MR head ref: 32fad0f4 (worktree head 32fad0f)
+
+===== Phase M: teardown with the merge request MERGED -> expect landed, no REFUSED =====
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.4liWDX
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+warning: lsof is unavailable; cannot resolve the tmux pane process group for task-live3
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+sample: synced 7e04c6d..813e831
+teardown task-live3 complete (window firstmate:fm-task-live3, worktree /tmp/fm-lab.4liWDX/projects/task-live3-wt)
+Backlog: task-live3 just finished (this home keeps no markdown backlog at /tmp/fm-lab.4liWDX/data/backlog.md). Update /tmp/fm-lab.4liWDX/data/backlog.md - move task-live3 to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+[rc=0]
+PASS merged-MR teardown: rc=0, no REFUSED, task record consumed
+
+===== done =====
+
+===== create fm/task-live4, merge request !4, squash-merge with source removal =====
+head C=b5e66d6
+Creating merge request for fm/task-live4 into main in gh0stwin/fm-live-evidence-1792947659
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/4
+MR4_URL=https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/4 IID4=4
+! No pipeline running on fm/task-live4
+✓ Merged!
+https://gitlab.com/gh0stwin/fm-live-evidence-1792947659/-/merge_requests/4
+[merge rc=0]
+unpushed (gate engages when non-empty): b5e66d6 add fourth feature
+MR state: {"state":"merged","sha":"b5e66d6ec7d0139866d73cffd341990148005430"}
+remote MR head ref: b5e66d6e
+
+===== Phase M2: teardown after squash merge -> expect landed, no REFUSED, and refs/fm-review/mr/4/head written =====
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.4liWDX
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+warning: lsof is unavailable; cannot resolve the tmux pane process group for task-live4
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+sample: synced 813e831..a53815f
+teardown task-live4 complete (window firstmate:fm-task-live4, worktree /tmp/fm-lab.4liWDX/projects/task-live4-wt)
+Backlog: task-live4 just finished (this home keeps no markdown backlog at /tmp/fm-lab.4liWDX/data/backlog.md). Update /tmp/fm-lab.4liWDX/data/backlog.md - move task-live4 to Done, keep Done to the 10 most recent, then re-scan Queued and dispatch only work whose blockers are gone and date is due.
+[rc=0]
+refs/fm-review/mr/4/head in repo = b5e66d6ec7d0139866d73cffd341990148005430 (MR head C=b5e66d6ec7d0139866d73cffd341990148005430)
+PASS squash-merged MR teardown: gate engaged (unpushed non-empty), landed with no REFUSED, and the GitLab arm fetched refs/merge-requests/4/head == worktree HEAD
+
+===== done =====
