@@ -1,0 +1,4 @@
+WARNING: watcher still down (same stale episode; last beat: 415s ago, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+no changes vs origin/main
+exit=0

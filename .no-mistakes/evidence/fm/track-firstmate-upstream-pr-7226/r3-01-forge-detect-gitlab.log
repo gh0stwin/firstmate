@@ -1,0 +1,4 @@
+$ git clone https://gitlab.com/gh0stwin/firstmate-t3-b-232901.git  # real gitlab.com clone
+$ bin/fm-forge-detect.sh /tmp/fm-lab.NElw3W/projects/bproj
+forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/firstmate-t3-b-232901.git is on gitlab.com
+exit=0

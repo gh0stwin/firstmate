@@ -1,0 +1,8 @@
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.9LaQrH
+WARNING: watcher still down (same stale episode; last beat: 62s ago, grace 300s) - full banner already printed this episode.
+warning: lsof is unavailable; cannot resolve the tmux pane process group for gitlab-live-allow
+WARNING: watcher still down (same stale episode; last beat: 68s ago, grace 300s) - full banner already printed this episode.
+gitlab-live-allow-proj: already current
+teardown gitlab-live-allow complete (window firstmate:fm-gitlab-live-allow, worktree /tmp/fm-lab.9LaQrH/projects/gitlab-live-allow-wt)
+Backlog: gitlab-live-allow is closed in /tmp/fm-lab.9LaQrH/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+exit=0

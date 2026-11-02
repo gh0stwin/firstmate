@@ -1,0 +1,12 @@
+$ git archive 487f4f0d bin | tar -x   # pre-fix parent of b36607e0
+$ FM_HOME=$LAB <487f4f0d>/bin/fm-review-diff.sh live-xrev --stat   # identical input, identical lab
+diff base: origin/main
+ feature3.txt | 1 +
+ feature4.txt | 1 +
+ 2 files changed, 2 insertions(+)
+exit=0
+--- stderr:
+/tmp/nm-old-bin.HaXoqN/bin/fm-review-diff.sh: line 185: resolved: unbound variable
+warning: PR head unavailable; diff may lag the open PR (using local branch fm/live-xrev)
+--- content reviewed by the pre-fix script:
+the MOVED LOCAL BRANCH (feature4.txt) was reviewed - the regression

@@ -1,0 +1,14 @@
+setup: worktree origin is project A (gh0stwin/firstmate-t3-a-232901); the recorded pr= URL names project B's MR !1 (mismatch);
+recorded pr_head=5b97d4c42a4f4dfa6a858039a40eb059aceaf9fe (adds feature3.txt only); the local branch fm/live-xrev advanced to 4701351df7485b91cbfa95a332600fa676860b5c (adds feature4.txt too).
+
+$ FM_HOME=$LAB bin/fm-review-diff.sh live-xrev --stat   # at HEAD b36607e0
+diff base: origin/main
+ feature3.txt | 1 +
+ 1 file changed, 1 insertion(+)
+exit=0
+--- stderr (checking for unbound-variable noise):
+(clean - no unbound-variable or other errors)
+--- feature4 must NOT appear in the reviewed diff (recorded head won, not the moved branch):
+yes - only feature3.txt was reviewed
+--- no merge-request ref was fetched from project A:
+yes - refs/fm-review/mr/1/head absent

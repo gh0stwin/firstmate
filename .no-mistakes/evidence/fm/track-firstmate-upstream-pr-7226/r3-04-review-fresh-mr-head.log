@@ -1,0 +1,10 @@
+$ git push origin feat1   # B!1 head advanced on gitlab.com to f8276c840a12a40217f3788961d2fab0c3651039 (recorded pr_head stays b30b8183)
+$ FM_HOME=$LAB bin/fm-review-diff.sh live-arm --stat
+WARNING: watcher still down (same stale episode; last beat: never, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ NOTES.md | 2 ++
+ 1 file changed, 2 insertions(+)
+exit=0
+--- fetched private ref in the worktree:
+f8276c840a12a40217f3788961d2fab0c3651039
+fresh MR head (f8276c840a12a40217f3788961d2fab0c3651039) won over stale recorded b30b8183: yes

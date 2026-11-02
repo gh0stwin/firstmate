@@ -1,0 +1,15 @@
+task task-mr2: worktree HEAD 6cf8b1a3 is on NO remote-tracking branch (squash merge rewrote it; source branch deleted);
+the only proof it landed is A!2 read live as merged + refs/merge-requests/2/head fetched from origin (a real gitlab.com fetch).
+
+$ FM_HOME=$LAB PATH=$LAB/fakebin:$PATH bin/fm-teardown.sh task-mr2
+amr2: already current
+teardown task-mr2 complete (window firstmate:fm-task-mr2, worktree /tmp/fm-lab.NElw3W/wt-mr2)
+Backlog: task-mr2 is closed in /tmp/fm-lab.NElw3W/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+--- stderr:
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.NElw3W
+warning: lsof is unavailable; cannot resolve the tmux pane process group for task-mr2
+exit=0
+--- REFUSED line present?
+no REFUSED - teardown completed
+--- backlog row state after teardown:
+  state: done

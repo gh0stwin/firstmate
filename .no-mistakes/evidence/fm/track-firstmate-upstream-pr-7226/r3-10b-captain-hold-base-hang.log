@@ -1,0 +1,6 @@
+$ git archive 41a47c09 | tar -x && bash tests/fm-captain-hold-lifecycle.test.sh   # base commit, full suite
+ok - marked hold reasons round-trip through public reads, fleet, startup, and return without changing other fields
+ok - new, active, and released holds publish origins after backend success with and without deferral
+Terminated
+Terminated
+(suite hangs here on this host; killed after confirming - identical to HEAD b36607e0)

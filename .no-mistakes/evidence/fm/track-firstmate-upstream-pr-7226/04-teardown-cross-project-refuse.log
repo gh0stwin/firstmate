@@ -1,0 +1,7 @@
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.9LaQrH
+WARNING: watcher still down (same stale episode; last beat: 131s ago, grace 300s) - full banner already printed this episode.
+REFUSED: worktree /tmp/fm-lab.9LaQrH/projects/gitlab-live-xproj-wt has work not on any remote and not landed.
+unpushed commits:
+dc09aa3 task work for project b (stale head)
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+exit=1

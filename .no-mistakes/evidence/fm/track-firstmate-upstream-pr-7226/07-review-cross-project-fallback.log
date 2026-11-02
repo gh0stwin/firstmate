@@ -1,0 +1,19 @@
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  3 task(s) in flight, but no watcher has a fresh beacon (last beat: 404s ago, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M6BZG6F24RQCV5JDR2H7M468/.pi/extensions/fm-primary-turnend-guard.ts -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M6BZG6F24RQCV5JDR2H7M468/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+diff base: origin/main
+ feature3.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/feature3.txt b/feature3.txt
+new file mode 100644
+index 0000000..1dfc089
+--- /dev/null
++++ b/feature3.txt
+@@ -0,0 +1 @@
++local task work
+exit=0

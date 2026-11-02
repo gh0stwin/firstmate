@@ -1,0 +1,9 @@
+$ FM_HOME=$LAB bin/fm-brief.sh gitlab-live-brief <throwaway repo> --mode no-mistakes --forge gitlab
+scaffolded: /tmp/fm-lab.NElw3W/data/gitlab-live-brief/brief.md (ship, mode=no-mistakes forge=gitlab; replace {TASK} and {FIRSTMATE_SPEC})
+exit=0
+--- rendered Rule 3 line:
+30:3. Use glab-axi for GitLab operations, gh-axi for GitHub operations, and chrome-devtools-axi for browser operations.
+--- forge=gitlab delivery contract:
+98:Delivery contract: mode=no-mistakes forge=gitlab
+--- glab-axi draft readback:
+133:After /no-mistakes reports CI green (the CI-ready return point - do not wait for it to keep monitoring in the background until merge), read the PR back from the forge and confirm it is not a draft (`glab-axi mr view <iid> --full` must print `draft: no`, where <iid> is the merge request number from your MR URL); if it is a draft, mark it ready with `glab-axi mr update <iid> --ready`.

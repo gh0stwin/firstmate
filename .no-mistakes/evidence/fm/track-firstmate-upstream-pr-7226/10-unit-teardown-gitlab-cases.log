@@ -1,0 +1,7 @@
+35:ok - teardown closes a landed GitLab task with its merge request URL as a note and GitHub and Forgejo tasks with --pr
+78:ok - a merged GitLab merge request with its head ref lands the worktree under either origin spelling
+79:ok - an open GitLab merge request does not allow teardown though its head ref holds the work
+80:ok - merged GitLab merge request does not allow teardown after a later local commit
+81:ok - a merged merge request in one project cannot authorize cleanup through another project's same-numbered head
+82:ok - teardown closes a landed GitLab task with its MR URL as a note
+ok - a merged merge request in one project cannot authorize cleanup through another project's same-numbered head
