@@ -1,0 +1,31 @@
+task task-mr2: worktree HEAD 1e12a24 is on NO remote-tracking branch (squash merge rewrote it; source branch deleted);
+the only proof it landed is A!2 read live as merged + refs/merge-requests/2/head fetched from origin (a real gitlab.com fetch).
+
+$ FM_HOME=$LAB PATH=$LAB/fakebin:$PATH bin/fm-teardown.sh task-mr2
+exit=0
+--- stdout:
+aproj: already current
+teardown task-mr2 complete (window firstmate:fm-task-mr2, worktree /tmp/fm-lab.m9GwRz/wt-mr2)
+Backlog: task-mr2 is closed in /tmp/fm-lab.m9GwRz/data/backlog.md. Run bin/fm-tasks-axi.sh ready for dependency-cleared candidates, check date gates, and dispatch only work whose blockers are gone and date is due.
+--- stderr:
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.m9GwRz
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  4 task(s) in flight, but no watcher has a fresh beacon (last beat: 321s ago, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  After draining queued wakes, repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M6BZG6F24RQCV5JDR2H7M468/.pi/extensions/fm-primary-turnend-guard.ts -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M6BZG6F24RQCV5JDR2H7M468/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+warning: lsof is unavailable; cannot resolve the tmux pane process group for task-mr2
+WARNING: watcher still down (same stale episode; last beat: 327s ago, grace 300s) - full banner already printed this episode.
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+--- REFUSED line present?
+no REFUSED - teardown completed
+--- private ref the proof fetched:
+1e12a24493239e5ac3ab29ad2d9277efb54e5452
+1e12a24493239e5ac3ab29ad2d9277efb54e5452
+--- backlog row state after teardown:
+  state: done
+--- meta removed?
+state/task-mr2.meta removed

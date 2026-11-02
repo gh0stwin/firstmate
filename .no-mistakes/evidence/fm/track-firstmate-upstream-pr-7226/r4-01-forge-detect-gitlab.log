@@ -1,0 +1,3 @@
+$ bin/fm-forge-detect.sh <real gitlab.com clone of the fixture>
+forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/firstmate-t4-b-641207.git is on gitlab.com
+exit=0

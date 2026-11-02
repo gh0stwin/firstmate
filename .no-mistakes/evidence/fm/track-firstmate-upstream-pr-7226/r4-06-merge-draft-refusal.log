@@ -1,0 +1,20 @@
+NEW behavior (commit e92d1b35): the merge request was armed while ready, then marked draft on the forge;
+fm-pr-merge.sh must refuse at merge time and never reach glab mr merge.
+
+$ glab mr update 1 --draft   # marked draft AFTER arming; work_in_progress=true, detailed_merge_status=draft_status
+
+$ FM_HOME=$LAB PATH=$LAB/fakebin:$PATH bin/fm-pr-merge.sh live-b1m https://gitlab.com/gh0stwin/firstmate-t4-b-641207/-/merge_requests/1 --allow-no-pipeline
+exit=1
+--- stderr:
+WARNING: watcher still down (same stale episode; last beat: 254s ago, grace 300s) - full banner already printed this episode.
+error: refusing to merge https://gitlab.com/gh0stwin/firstmate-t4-b-641207/-/merge_requests/1
+  - detailed_merge_status is "draft_status", not mergeable
+  - the merge request is a draft
+--- stdout:
+armed: state/live-b1m.check.sh
+--- the draft refusal line present?
+yes: "the merge request is a draft"
+--- merge request state on the forge after the refusal (must still be open, unmerged):
+opened	true		c26dbdb2
+--- main on the forge still without NOTES.md?
+fatal: path 'NOTES.md' does not exist in 'origin/main'

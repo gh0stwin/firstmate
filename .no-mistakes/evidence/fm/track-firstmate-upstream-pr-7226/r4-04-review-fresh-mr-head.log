@@ -1,0 +1,17 @@
+$ FM_HOME=$LAB bin/fm-review-diff.sh live-arm --stat   # baseline at recorded head 8ebc1b1c (NOTES.md one line)
+WARNING: watcher still down (same stale episode; last beat: 177s ago, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ NOTES.md | 1 +
+ 1 file changed, 1 insertion(+)
+exit=0
+$ FM_HOME=$LAB bin/fm-review-diff.sh live-arm --stat   # after the forge head advanced to c26dbdb; recorded pr_head still 8ebc1b1c
+WARNING: watcher still down (same stale episode; last beat: 185s ago, grace 300s) - full banner already printed this episode.
+diff base: origin/main
+ NOTES.md | 2 ++
+ 1 file changed, 2 insertions(+)
+exit=0
+--- fetched private ref:
+c26dbdb2784dba26d3def9a55039b8edaab7728a
+--- live forge sha now:
+c26dbdb2784dba26d3def9a55039b8edaab7728a
+--- two insertions prove the fresh refs/merge-requests/1/head (c26dbdb) won over the stale recorded 8ebc1b1c

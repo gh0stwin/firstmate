@@ -1,0 +1,43 @@
+before/after regression harness: same fixture, same fake glab, one MR JSON with
+work_in_progress=true and every other pre-merge condition green (successful pipeline at head).
+The fake glab logs every invocation and records any "mr merge" call.
+
+=== BEFORE: parent commit 707e6a62 bin/fm-pr-merge.sh
+exit=0
+--- stderr:
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /tmp/r4-regr/parent-tree/.pi/extensions/fm-primary-turnend-guard.ts -e /tmp/r4-regr/parent-tree/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+verified: https://gitlab.example/group/subgroup/project/-/merge_requests/7 is open and mergeable, with a successful pipeline at head aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+--- stdout:
+armed: state/task-x1.check.sh
+Merged (fake)
+--- glab invocations:
+mr view 7 -R https://gitlab.example/group/subgroup/project -F json
+mr view 7 -R https://gitlab.example/group/subgroup/project -F json
+mr merge 7 -R https://gitlab.example/group/subgroup/project --sha aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa --yes
+mr view 7 -R https://gitlab.example/group/subgroup/project -F json
+RESULT: glab mr merge WAS CALLED - the parent attempted to merge a draft with no firstmate-side refusal
+
+=== AFTER: target commit e92d1b35 bin/fm-pr-merge.sh
+exit=1
+--- stderr:
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+●  WATCHER DOWN - SUPERVISION IS OFF
+●  1 task(s) in flight, but no watcher has a fresh beacon (last beat: never, grace 300s).
+●  Trust the emitted supervision protocol for this harness; do not use shell & for watcher repair.
+●  This is a supervision warning only; the guarded operation WILL still run.
+●  repair a missing or failed watcher cycle with the Pi tool fm_watch_arm_pi, or restart Pi with -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M6BZG6F24RQCV5JDR2H7M468/.pi/extensions/fm-primary-turnend-guard.ts -e /home/node/.no-mistakes/worktrees/ef201284bc89/01M6BZG6F24RQCV5JDR2H7M468/.pi/extensions/fm-primary-pi-watch.ts if the extensions are not loaded.
+●━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+error: refusing to merge https://gitlab.example/group/subgroup/project/-/merge_requests/7
+  - the merge request is a draft
+--- stdout:
+armed: state/task-x1.check.sh
+--- glab invocations:
+mr view 7 -R https://gitlab.example/group/subgroup/project -F json
+mr view 7 -R https://gitlab.example/group/subgroup/project -F json
+RESULT: no merge call - refused before glab mr merge

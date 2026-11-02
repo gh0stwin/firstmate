@@ -1,0 +1,20 @@
+recorded pr= URL names project A MR !1 (MERGED, read live through glab);
+the worktree origin is project B, whose own same-numbered MR !1 head contains the worktree HEAD c26dbdb.
+
+$ FM_HOME=$LAB PATH=$LAB/fakebin:$PATH bin/fm-teardown.sh task-xproj
+exit=1
+--- stderr:
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.m9GwRz
+WARNING: watcher still down (same stale episode; last beat: 230s ago, grace 300s) - full banner already printed this episode.
+REFUSED: worktree /tmp/fm-lab.m9GwRz/wt-xproj has work not on any remote and not landed.
+unpushed commits:
+c26dbdb advance head on the forge
+8ebc1b1 b feat one
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.
+--- stdout:
+--- REFUSED line present?
+yes - REFUSED
+--- task state retained?
+meta retained byte-identical
+worktree still present: yes
+backlog state: in_flight

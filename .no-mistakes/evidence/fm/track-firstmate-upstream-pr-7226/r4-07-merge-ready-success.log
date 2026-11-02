@@ -1,0 +1,18 @@
+$ glab mr update 1 --ready   # marked ready again
+
+$ FM_HOME=$LAB PATH=$LAB/fakebin:$PATH bin/fm-pr-merge.sh live-b1m https://gitlab.com/gh0stwin/firstmate-t4-b-641207/-/merge_requests/1 --allow-no-pipeline
+exit=0
+--- stdout:
+armed: state/live-b1m.check.sh
+! No pipeline running on b-mr1
+✓ Merged!
+https://gitlab.com/gh0stwin/firstmate-t4-b-641207/-/merge_requests/1
+--- stderr:
+WARNING: watcher still down (same stale episode; last beat: 284s ago, grace 300s) - full banner already printed this episode.
+verified: https://gitlab.com/gh0stwin/firstmate-t4-b-641207/-/merge_requests/1 is open and mergeable at head c26dbdb2784dba26d3def9a55039b8edaab7728a, with no head pipeline, waived by --allow-no-pipeline
+--- merge request state on the forge now:
+merged	false	c26dbdb2
+--- the armed poll answers:
+merged
+--- corrected live view after --ready (the jq line above had a shell-quoting error in the harness, not the product):
+state=merged work_in_progress=false detailed_merge_status=not_open sha=c26dbdb2
