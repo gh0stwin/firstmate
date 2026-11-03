@@ -1,0 +1,1 @@
+error: https://gitlab.com/gh0stwin/fm-live-7243-a/-/merge_requests/1 is a draft merge request; a draft cannot be merged, so merge monitoring would wait for an event that cannot occur - mark it ready for review and arm again, or declare a wait instead of done if the draft is deliberate

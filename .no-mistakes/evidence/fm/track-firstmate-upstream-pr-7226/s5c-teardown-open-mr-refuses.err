@@ -1,0 +1,7 @@
+fm-gate-refuse: gate agent lifecycle permitted only against lab home /tmp/fm-lab.60l2Hy/home
+WARNING: watcher still down (same stale episode; last beat: 3s ago, grace 300s) - full banner already printed this episode.
+WARNING: queued wakes pending - drain them with bin/fm-wake-drain.sh before anything else.
+REFUSED: worktree /tmp/fm-lab.60l2Hy/repo-b-cc-wt has work not on any remote and not landed.
+unpushed commits:
+6846c90 feat: work carried only by open MR !3's head
+Push the branch, land its PR, or get the captain's explicit OK to discard, then --force.

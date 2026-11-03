@@ -1,0 +1,2 @@
+WARNING: watcher still down (same stale episode; last beat: 340s ago, grace 300s) - full banner already printed this episode.
+verified: https://gitlab.com/gh0stwin/fm-live-7243-a/-/merge_requests/1 is open and mergeable at head 64d742dc2b1c6f92237d0b7c6340ed1119038d2d, with no head pipeline, waived by --allow-no-pipeline

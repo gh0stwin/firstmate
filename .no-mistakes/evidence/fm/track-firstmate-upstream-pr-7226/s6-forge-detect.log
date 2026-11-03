@@ -1,0 +1,10 @@
+== https origin:
+forge=gitlab evidence=origin remote https://gitlab.com/gh0stwin/fm-live-7243-a.git is on gitlab.com
+== scp-like ssh origin:
+forge=gitlab evidence=origin remote git@gitlab.com:gh0stwin/fm-live-7243-a.git is on gitlab.com
+== ssh:// origin:
+forge=gitlab evidence=origin remote ssh://git@gitlab.com/gh0stwin/fm-live-7243-b.git is on gitlab.com
+== self-hosted gitlab-looking host:
+forge=none
+== github control:
+forge=none

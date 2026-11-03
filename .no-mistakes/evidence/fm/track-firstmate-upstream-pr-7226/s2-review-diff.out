@@ -1,0 +1,19 @@
+diff base: origin/main
+ feature.txt  | 1 +
+ followup.txt | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/feature.txt b/feature.txt
+new file mode 100644
+index 0000000..3fe0868
+--- /dev/null
++++ b/feature.txt
+@@ -0,0 +1 @@
++live-gitlab-arm
+diff --git a/followup.txt b/followup.txt
+new file mode 100644
+index 0000000..60a2efb
+--- /dev/null
++++ b/followup.txt
+@@ -0,0 +1 @@
++follow-up pushed from the project copy, not the task worktree

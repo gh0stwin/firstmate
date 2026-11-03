@@ -1,0 +1,4 @@
+armed: state/task-x1.check.sh
+! No pipeline running on fm/task-x1
+✓ Merged!
+https://gitlab.com/gh0stwin/fm-live-7243-a/-/merge_requests/1

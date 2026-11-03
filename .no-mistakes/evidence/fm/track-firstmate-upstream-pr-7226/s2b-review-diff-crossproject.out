@@ -1,0 +1,11 @@
+diff base: origin/main
+ cb-local.txt | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/cb-local.txt b/cb-local.txt
+new file mode 100644
+index 0000000..9a37d43
+--- /dev/null
++++ b/cb-local.txt
+@@ -0,0 +1 @@
++cross-project case local work
